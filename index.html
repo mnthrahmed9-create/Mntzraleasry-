@@ -4,217 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تكسي العراق</title>
-    <!-- مكتبة الخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        /* إعدادات عامة */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body, html { height: 100%; overflow: hidden; background: #f8f9fa; }
-
-        /* ---- 1. شاشة تسجيل الدخول ---- */
-        #login-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #126b52, #1b8a69);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 2000;
-            transition: opacity 0.4s ease;
-        }
-        .login-card {
-            background: white;
-            width: 100%;
-            max-width: 400px;
-            padding: 30px 20px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            text-align: center;
-        }
+        #login-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #126b52, #1b8a69); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 2000; transition: opacity 0.4s ease; }
+        .login-card { background: white; width: 100%; max-width: 400px; padding: 30px 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
         .login-logo { font-size: 60px; margin-bottom: 10px; }
         .login-title { font-size: 24px; font-weight: bold; color: #126b52; margin-bottom: 5px; }
         .login-subtitle { font-size: 14px; color: #666; margin-bottom: 30px; }
-        
-        .input-group {
-            display: flex;
-            align-items: center;
-            background: #f0f2f5;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #e1e4e8;
-            direction: ltr; /* عشان الرقم يكتب صح */
-        }
+        .input-group { display: flex; align-items: center; background: #f0f2f5; border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #e1e4e8; direction: ltr; }
         .input-group span { font-size: 18px; margin-right: 10px; color: #555; font-weight: bold; }
-        .input-group input {
-            border: none; background: transparent; flex: 1;
-            font-size: 18px; outline: none; font-weight: bold; color: #333;
-        }
-        
-        .btn-main {
-            width: 100%; background: #126b52; color: white; border: none;
-            padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold;
-            cursor: pointer; transition: background 0.2s;
-        }
+        .input-group input { border: none; background: transparent; flex: 1; font-size: 18px; outline: none; font-weight: bold; color: #333; }
+        .btn-main { width: 100%; background: #126b52; color: white; border: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         .btn-main:active { background: #0d4f3d; }
-
-        /* ---- 2. شاشة الخريطة (تكون مخفية بالبداية) ---- */
-        #app-screen {
-            display: none; /* مخفية لحد ما يسجل دخول */
-            height: 100%; width: 100%; position: relative;
-        }
+        #app-screen { display: none; height: 100%; width: 100%; position: relative; }
         #map { height: 100vh; width: 100vw; z-index: 1; }
-        
-        /* الشريط العلوي */
-        .top-bar {
-            position: absolute; top: 15px; left: 15px; right: 15px;
-            background: white; border-radius: 15px; padding: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            font-weight: bold; font-size: 16px;
-        }
-        
-        /* الدبوس الثابت بالنص */
-        .center-pin {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -100%);
-            z-index: 1000; font-size: 45px; pointer-events: none;
-            margin-top: -5px; filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.3));
-        }
-
-        /* أزرار الخريطة */
-        .map-controls {
-            position: absolute; top: 90px; right: 15px; z-index: 1000;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .map-controls button, .locate-btn {
-            background: white; border: none; width: 45px; height: 45px;
-            border-radius: 50%; font-size: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-        }
+        .top-bar { position: absolute; top: 15px; left: 15px; right: 15px; background: white; border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.08); font-weight: bold; font-size: 16px; }
+        .center-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); z-index: 1000; font-size: 45px; pointer-events: none; margin-top: -5px; filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.3)); }
+        .map-controls { position: absolute; top: 90px; right: 15px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        .map-controls button, .locate-btn { background: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); cursor: pointer; display: flex; justify-content: center; align-items: center; }
         .locate-btn { position: absolute; top: 200px; right: 15px; z-index: 1000; }
-
-        /* الشريط السفلي */
-        .bottom-sheet {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: white; border-radius: 25px 25px 0 0; padding: 20px;
-            z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            padding-bottom: 30px;
-        }
-        .search-box {
-            display: flex; align-items: center; background: #f0f2f5;
-            border-radius: 12px; padding: 15px; margin-bottom: 15px;
-            border: 1px solid #e1e4e8;
-        }
-        .search-box input {
-            border: none; background: transparent; flex: 1;
-            font-size: 16px; outline: none;
-        }
+        .bottom-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: white; border-radius: 25px 25px 0 0; padding: 20px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); padding-bottom: 30px; }
+        .search-box { display: flex; align-items: center; background: #f0f2f5; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #e1e4e8; }
+        .search-box input { border: none; background: transparent; flex: 1; font-size: 16px; outline: none; }
         .search-box span { font-size: 20px; margin-left: 10px; color: #888; }
     </style>
 </head>
 <body>
 
-    <!-- ================= 1. شاشة تسجيل الدخول ================= -->
     <div id="login-screen">
         <div class="login-card">
             <div class="login-logo">🚕</div>
             <div class="login-title">تكسي العراق</div>
             <div class="login-subtitle">أهلاً بك، يرجى إدخال رقم هاتفك للمتابعة</div>
-            
             <div class="input-group">
                 <span>🇮🇶 +964</span>
                 <input type="tel" id="phoneInput" placeholder="7XX XXX XXXX" maxlength="11">
             </div>
-            
             <button class="btn-main" onclick="login()">متابعة</button>
         </div>
     </div>
 
-    <!-- ================= 2. شاشة الخريطة ================= -->
     <div id="app-screen">
         <div class="center-pin">📍</div>
-        
-        <div class="top-bar">
-            <span>☰</span>
-            <span>🚕 طلب تكسي</span>
-            <span>بغداد ⌄</span>
-        </div>
-
-        <div class="map-controls">
-            <button id="zoomIn">+</button>
-            <button id="zoomOut">-</button>
-        </div>
+        <div class="top-bar"><span>☰</span><span>🚕 طلب تكسي</span><span>بغداد ⌄</span></div>
+        <div class="map-controls"><button id="zoomIn">+</button><button id="zoomOut">-</button></div>
         <button class="locate-btn" id="locateBtn">◎</button>
-
         <div id="map"></div>
-
         <div class="bottom-sheet">
-            <div class="search-box">
-                <span>🔍</span>
-                <input type="text" placeholder="إلى أين تريد الذهاب؟">
-            </div>
-            <button class="btn-main" onclick="requestRide()">
-                تأكيد موقع الانطلاق 📍
-            </button>
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="إلى أين تريد الذهاب؟"></div>
+            <button class="btn-main" onclick="requestRide()">تأكيد موقع الانطلاق 📍</button>
         </div>
     </div>
 
-    <!-- ================= كود البرمجة (JavaScript) ================= -->
     <script>
-        var map; // متغير عشان نحتفظ بالخريطة
-
-        // 1. دالة تسجيل الدخول
+        var map;
         function login() {
             var phone = document.getElementById('phoneInput').value;
-            if (phone.length < 10) {
-                alert("الرجاء إدخال رقم هاتف صحيح (11 رقم)");
-                return;
-            }
-
-            // إخفاء شاشة الدخول وإظهار شاشة الخريطة
+            if (phone.length < 10) { alert("الرجاء إدخال رقم هاتف صحيح (11 رقم)"); return; }
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(function() {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('app-screen').style.display = 'block';
-                
-                // تشغيل الخريطة (لازم نشغلها بعد ما تظهر الشاشة)
                 initMap(); 
-            }, 400); // ننتظر نصف ثانية عشان تخلص الحركة
+            }, 400);
         }
-
-        // 2. دالة تشغيل الخريطة
         function initMap() {
-            var lat = 33.3152; // بغداد
-            var lng = 44.3661;
-
+            var lat = 33.3152; var lng = 44.3661;
             map = L.map('map', { zoomControl: false }).setView([lat, lng], 15);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-
-            // إصلاح مشكلة الخريطة الرمادية (لأنها كانت مخفية)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
             setTimeout(function(){ map.invalidateSize(); }, 200);
-
-            // أزرار التكبير
             document.getElementById('zoomIn').onclick = function() { map.zoomIn(); };
             document.getElementById('zoomOut').onclick = function() { map.zoomOut(); };
-            
-            // زر تحديد الموقع
-            document.getElementById('locateBtn').onclick = function() { 
-                map.locate({setView: true, maxZoom: 16}); 
-            };
+            document.getElementById('locateBtn').onclick = function() { map.locate({setView: true, maxZoom: 16}); };
         }
-
-        // 3. دالة طلب الرحلة
         function requestRide() {
             var center = map.getCenter();
             alert("تم تحديد موقع الانطلاق!\nخط العرض: " + center.lat.toFixed(4) + "\nخط الطول: " + center.lng.toFixed(4) + "\n\nجاري البحث عن سائق...");
-            // هنا راح نضيف كود إظهار السيارات مستقبلاً
         }
     </script>
 </body>

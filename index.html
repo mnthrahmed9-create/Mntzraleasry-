@@ -1,163 +1,626 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>تكسي</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17191d">
+<title>Taxi Iraq - تكسي العراق</title>
 <style>
-  :root{--p:#6B3FE8;--p2:#8A63F5;--pl:#F1ECFF;--ink:#171A24;--muted:#7C8193;--bg:#F5F6FA;--line:#ECEEF4;--green:#17B26A;--y:#FFB800}
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;background:#d9dce6;color:var(--ink);display:flex;justify-content:center}
-  .app{width:100%;max-width:430px;height:100vh;max-height:900px;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-  .map{position:absolute;inset:0 0 40% 0;background:#e8ecf3;overflow:hidden}
-  .map svg{width:100%;height:100%}
-  .me{position:absolute;top:44%;left:50%;width:20px;height:20px;border-radius:50%;background:var(--p);border:4px solid #fff;
-    transform:translate(-50%,-50%);box-shadow:0 0 0 10px rgba(107,63,232,.2);animation:pl 2s infinite}
-  @keyframes pl{50%{box-shadow:0 0 0 18px rgba(107,63,232,.08)}}
-  .car{position:absolute;font-size:20px}
-
-  .head{position:absolute;top:0;inset-inline:0;padding:max(14px,env(safe-area-inset-top)) 16px 0;display:flex;align-items:center;justify-content:space-between;z-index:5}
-  .chip{background:#fff;border-radius:22px;padding:9px 14px;font-size:13.5px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.1);display:flex;gap:6px;align-items:center}
-  .round{width:42px;height:42px;border-radius:50%;background:#fff;border:0;box-shadow:0 4px 14px rgba(0,0,0,.1);font-size:17px;cursor:pointer}
-
-  .sheet{position:absolute;bottom:64px;inset-inline:0;background:#fff;border-radius:26px 26px 0 0;padding:10px 16px 14px;box-shadow:0 -8px 30px rgba(0,0,0,.1);z-index:6;
-    max-height:calc(100% - 140px);overflow:auto}
-  .grab{width:42px;height:5px;background:var(--line);border-radius:9px;margin:0 auto 12px}
-
-  .search{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:16px;padding:14px;cursor:pointer;width:100%;border:0;font:inherit;text-align:start}
-  .search .dot{width:10px;height:10px;border-radius:50%;background:var(--p)}
-  .search span{color:var(--muted);font-size:15px;flex:1}
-  .search b{background:#fff;border-radius:10px;padding:5px 10px;font-size:12px;color:var(--p)}
-
-  .saved{display:flex;gap:10px;margin:12px 0 14px;overflow-x:auto;scrollbar-width:none}
-  .saved button{flex:none;display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:9px 13px;font:inherit;font-size:13.5px;cursor:pointer}
-
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-  .svc{background:var(--pl);border:0;border-radius:18px;padding:14px 4px 10px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;transition:.15s}
-  .svc:active{transform:scale(.96)}
-  .svc em{font-size:28px;font-style:normal}
-  .svc span{font-size:12.5px;font-weight:700}
-  .svc i{position:absolute;top:-6px;inset-inline-end:6px;background:var(--y);font-style:normal;font-size:10px;font-weight:800;padding:2px 7px;border-radius:9px}
-
-  .promo{background:linear-gradient(120deg,var(--p),var(--p2));color:#fff;border-radius:18px;padding:16px;display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative}
-  .promo h3{font-size:16px;margin-bottom:4px}.promo p{font-size:12.5px;opacity:.9}
-  .promo .em{font-size:46px;transform:rotate(-8deg)}
-  .promo button{margin-top:10px;background:#fff;color:var(--p);border:0;border-radius:10px;padding:7px 14px;font:inherit;font-weight:800;font-size:12.5px}
-
-  .nav{position:absolute;bottom:0;inset-inline:0;height:64px;background:#fff;border-top:1px solid var(--line);display:flex;z-index:7;padding-bottom:env(safe-area-inset-bottom)}
-  .nav button{flex:1;border:0;background:none;font:inherit;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer}
-  .nav button em{font-style:normal;font-size:21px}
-  .nav button.on{color:var(--p);font-weight:800}
-
-  /* ride screen */
-  .ride{position:absolute;inset:0;background:var(--bg);z-index:20;transform:translateY(100%);transition:transform .35s ease;display:flex;flex-direction:column}
-  .ride.open{transform:none}
-  .rtop{background:#fff;padding:max(14px,env(safe-area-inset-top)) 16px 14px;border-radius:0 0 24px 24px;box-shadow:0 6px 20px rgba(0,0,0,.06)}
-  .rtop .bar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-  .rtop .bar b{font-size:17px}
-  .rt{background:var(--bg);border-radius:16px;padding:4px 14px}
-  .rt div{display:flex;align-items:center;gap:12px;padding:10px 0;font-size:14.5px}
-  .rt div+div{border-top:1px dashed var(--line)}
-  .rt i{width:11px;height:11px;border-radius:50%;background:var(--green)}.rt div:last-child i{background:var(--ink);border-radius:3px}
-  .list{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
-  .opt{display:flex;align-items:center;gap:12px;background:#fff;border:2px solid transparent;border-radius:18px;padding:13px;cursor:pointer;font:inherit;text-align:start;width:100%}
-  .opt.sel{border-color:var(--p);background:#FAF8FF}
-  .opt em{font-size:32px;font-style:normal}.opt .t{flex:1}.opt .t b{display:block;font-size:15px}.opt .t small{color:var(--muted);font-size:12px}
-  .opt .pr{font-weight:800;font-size:16px}
-  .rbot{background:#fff;padding:14px 16px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px rgba(0,0,0,.06)}
-  .pay{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:12px}.pay b{color:var(--ink)}
-  .cta{width:100%;border:0;background:var(--p);color:#fff;font:inherit;font-weight:800;font-size:17px;padding:16px;border-radius:16px;cursor:pointer;box-shadow:0 8px 20px rgba(107,63,232,.35)}
-  .cta:active{transform:scale(.98)}
-  .toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;z-index:50;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
-  .toast.on{opacity:1}
+:root {
+  --yellow:#ffd43b;
+  --dark:#17191d;
+  --bg:#f5f6f8;
+  --muted:#858b95;
+  --green:#159b67;
+  --red:#e34f4f;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--dark);
+  font-family:Tahoma,Arial,sans-serif;
+}
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+.app {
+  max-width:480px;
+  min-height:100vh;
+  margin:auto;
+  background:white;
+  padding-bottom:85px;
+  position:relative;
+}
+header {
+  background:var(--dark);
+  color:white;
+  padding:22px 19px;
+  border-radius:0 0 25px 25px;
+}
+.top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.brand { display:flex; align-items:center; gap:10px; }
+.logo {
+  width:46px;height:46px;
+  display:grid;place-items:center;
+  background:var(--yellow);
+  color:var(--dark);
+  border-radius:14px;
+  font-size:26px;
+}
+.brand h1 { margin:0;font-size:19px; }
+.brand small { display:block;color:#b9bdc5;margin-top:5px; }
+.avatar {
+  background:#30343a;
+  width:42px;height:42px;
+  display:grid;place-items:center;
+  border-radius:50%;font-size:22px;
+}
+.welcome { margin-top:27px; }
+.welcome h2 { font-size:23px;margin:0 0 8px; }
+.welcome p { color:#c3c6cc;font-size:13px;margin:0; }
+.modes {
+  display:flex;gap:5px;
+  background:#2a2d32;padding:5px;
+  border-radius:12px;margin-top:23px;
+}
+.modes button {
+  flex:1;padding:12px 5px;
+  background:transparent;color:#ddd;
+  border:0;border-radius:9px;font-size:13px;
+}
+.modes button.active {
+  background:var(--yellow);
+  color:var(--dark);font-weight:bold;
+}
+main { padding:20px 17px; }
+h3 { font-size:16px;margin:0 0 14px; }
+.section { margin-bottom:23px; }
+.map {
+  height:175px;
+  position:relative;overflow:hidden;
+  border-radius:18px;
+  background-color:#e9eee7;
+  background-image:
+  linear-gradient(25deg,transparent 46%,white 47%,white 50%,transparent 51%),
+  linear-gradient(120deg,transparent 35%,white 36%,white 39%,transparent 40%),
+  linear-gradient(80deg,transparent 65%,#d4e2cf 66%,#d4e2cf 77%,transparent 78%),
+  linear-gradient(165deg,transparent 20%,white 21%,white 24%,transparent 25%);
+}
+.road {
+  position:absolute;width:130%;height:7px;
+  background:white;border:1px solid #d6ddd3;
+  border-radius:10px;top:50%;right:-15%;
+  transform:rotate(-25deg);
+}
+.road.two {
+  top:35%;transform:rotate(43deg);
+}
+.route {
+  position:absolute;top:44px;right:49%;
+  height:76px;width:4px;
+  background:var(--yellow);transform:rotate(32deg);
+}
+.pin {
+  position:absolute;width:27px;height:27px;
+  border:4px solid white;border-radius:50%;
+  box-shadow:0 2px 8px #0002;
+}
+.pin.start { background:var(--green);top:34px;right:27%; }
+.pin.end { background:var(--red);bottom:25px;left:27%; }
+.map-caption {
+  position:absolute;bottom:9px;left:9px;
+  background:white;padding:8px 10px;
+  border-radius:9px;font-size:11px;
+}
+.location-box {
+  border:1px solid #e9ebef;
+  border-radius:15px;padding:4px 13px;
+}
+.location-row {
+  display:flex;align-items:center;gap:12px;
+  padding:13px 0;
+}
+.location-row + .location-row {
+  border-top:1px solid #eceef1;
+}
+.dot {
+  width:11px;height:11px;border-radius:50%;
+  flex-shrink:0;
+}
+.dot.green { background:var(--green); }
+.dot.red { background:var(--red); }
+.location-input { flex:1;min-width:0; }
+.location-input label {
+  display:block;font-size:11px;
+  color:var(--muted);margin-bottom:6px;
+}
+.location-input input {
+  width:100%;border:0;outline:0;
+  background:transparent;font-size:14px;color:var(--dark);
+}
+.location-icon { font-size:19px; }
+.vehicle-list { display:grid;gap:10px; }
+.vehicle {
+  width:100%;display:flex;align-items:center;gap:11px;
+  border:1.5px solid #e8eaf0;border-radius:15px;
+  padding:12px;background:white;text-align:right;
+}
+.vehicle.selected {
+  border-color:#e5bd19;background:#fffbed;
+}
+.car-icon {
+  width:52px;height:50px;border-radius:12px;
+  background:#f0f1f4;display:grid;place-items:center;
+  font-size:28px;flex-shrink:0;
+}
+.vehicle-info { flex:1; }
+.vehicle-info strong { font-size:13px;display:block; }
+.vehicle-info small {
+  display:block;font-size:11px;color:var(--muted);
+  margin-top:6px;
+}
+.price { font-size:13px;font-weight:bold;text-align:left; }
+.price small {
+  display:block;font-size:10px;font-weight:normal;
+  color:var(--muted);margin-top:5px;
+}
+.summary {
+  display:flex;align-items:center;
+  justify-content:space-between;padding:14px 0;
+}
+.summary small { color:var(--muted);font-size:12px; }
+.summary strong { display:block;font-size:23px;margin-top:6px; }
+.primary {
+  width:100%;border:0;border-radius:13px;
+  padding:16px;background:var(--yellow);
+  color:var(--dark);font-weight:bold;font-size:15px;
+}
+.secondary {
+  width:100%;border:1px solid #ddd;
+  border-radius:12px;padding:13px;background:white;
+  font-weight:bold;margin-top:9px;
+}
+.note {
+  font-size:11px;color:var(--muted);
+  text-align:center;line-height:1.8;margin-top:12px;
+}
+.panel {
+  border:1px solid #e9ebef;background:#fafbfc;
+  padding:16px;border-radius:15px;margin-bottom:14px;
+}
+.panel p { color:var(--muted);font-size:13px;line-height:1.8; }
+.field { margin-bottom:13px; }
+.field label {
+  display:block;font-size:12px;
+  color:var(--muted);margin-bottom:7px;
+}
+.field input,.field select {
+  width:100%;padding:13px;
+  border:1px solid #e1e4e9;border-radius:11px;
+  background:white;outline:0;
+}
+.driver-card {
+  display:flex;align-items:center;gap:12px;
+  background:white;border:1px solid #e9ebef;
+  padding:12px;border-radius:13px;margin-bottom:10px;
+}
+.driver-emoji {
+  width:45px;height:45px;display:grid;
+  place-items:center;background:#fff3c5;
+  border-radius:12px;font-size:24px;
+}
+.driver-info { flex:1; }
+.driver-info strong { font-size:13px; }
+.driver-info small {
+  display:block;color:var(--muted);
+  font-size:11px;margin-top:5px;
+}
+.badge { color:var(--green);font-size:11px; }
+.bottom-nav {
+  position:absolute;bottom:0;right:0;left:0;
+  height:73px;background:white;
+  border-top:1px solid #e9ebef;
+  display:flex;align-items:center;
+  justify-content:space-around;
+}
+.nav-btn {
+  border:0;background:transparent;color:#8b9099;
+  display:grid;justify-items:center;gap:5px;font-size:10px;
+}
+.nav-btn span { font-size:21px; }
+.nav-btn.active { color:var(--dark);font-weight:bold; }
+.hidden { display:none!important; }
+.toast {
+  position:fixed;z-index:10;bottom:88px;
+  left:50%;transform:translateX(-50%);
+  background:#202329;color:white;
+  padding:13px 17px;border-radius:12px;
+  font-size:13px;width:max-content;
+  max-width:90%;text-align:center;
+}
+@media(min-width:600px) {
+  body { padding:20px 0; }
+  .app { border-radius:24px;overflow:hidden; }
+}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <div class="map">
-    <svg viewBox="0 0 430 540" preserveAspectRatio="xMidYMid slice">
-      <rect width="430" height="540" fill="#e8ecf3"/>
-      <path d="M-10 430 Q130 380 230 430 T450 400 L450 540 L-10 540Z" fill="#cde4f5"/>
-      <g fill="#d8eed0"><rect x="24" y="70" width="110" height="70" rx="16"/><rect x="300" y="250" width="110" height="80" rx="16"/></g>
-      <g stroke="#fff" stroke-width="13" fill="none" stroke-linecap="round">
-        <path d="M-10 170 L440 215"/><path d="M-10 330 L440 295"/><path d="M110 -10 L160 450"/><path d="M320 -10 L290 450"/>
-      </g>
-    </svg>
-    <div class="me"></div>
-    <span class="car" style="top:30%;left:20%">🚕</span><span class="car" style="top:56%;left:68%">🚕</span>
-    <span class="car" style="top:22%;left:74%">🚕</span><span class="car" style="top:62%;left:30%">🚕</span>
+<header>
+  <div class="top">
+    <div class="brand">
+      <div class="logo">🚕</div>
+      <div>
+        <h1>Taxi Iraq</h1>
+        <small>مشوارك صار أسهل</small>
+      </div>
+    </div>
+    <div class="avatar">👤</div>
+  </div>
+  <div class="welcome">
+    <h2 id="welcomeTitle">هلا بيك 👋</h2>
+    <p id="welcomeText">وين تحب نوصلك اليوم؟</p>
+  </div>
+  <div class="modes">
+    <button id="passengerMode" class="active"
+      onclick="setMode('passenger')">🚕 أريد تكسي</button>
+    <button id="driverMode"
+      onclick="setMode('driver')">🛞 أنا سائق</button>
+  </div>
+</header>
+
+<main>
+  <div id="passengerPage">
+    <section class="section">
+      <h3>حدد مشوارك 📍</h3>
+      <div class="map">
+        <div class="road"></div>
+        <div class="road two"></div>
+        <div class="route"></div>
+        <div class="pin start"></div>
+        <div class="pin end"></div>
+        <div class="map-caption">🗺️ معاينة توضيحية للخريطة</div>
+      </div>
+      <div class="location-box">
+        <div class="location-row">
+          <div class="dot green"></div>
+          <div class="location-input">
+            <label for="pickup">مكان الانطلاق</label>
+            <input id="pickup" placeholder="مثلاً: الناصرية، شارع الحبوبي">
+          </div>
+          <span class="location-icon">📍</span>
+        </div>
+        <div class="location-row">
+          <div class="dot red"></div>
+          <div class="location-input">
+            <label for="destination">وين تريد تروح؟</label>
+            <input id="destination" placeholder="اكتب وجهتك">
+          </div>
+          <span class="location-icon">🏁</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h3>اختار نوع السيارة 🚘</h3>
+      <div class="vehicle-list">
+        <button class="vehicle selected" data-type="economy"
+          data-price="3000" onclick="selectVehicle(this)">
+          <div class="car-icon">🚗</div>
+          <div class="vehicle-info">
+            <strong>تكسي اقتصادي</strong>
+            <small>1–4 ركاب · سيارة عادية</small>
+          </div>
+          <div class="price">٣٬٠٠٠ د.ع<small>سعر تقديري</small></div>
+        </button>
+
+        <button class="vehicle" data-type="comfort"
+          data-price="5000" onclick="selectVehicle(this)">
+          <div class="car-icon">🚙</div>
+          <div class="vehicle-info">
+            <strong>تكسي مريح</strong>
+            <small>1–4 ركاب · راحة أكثر</small>
+          </div>
+          <div class="price">٥٬٠٠٠ د.ع<small>سعر تقديري</small></div>
+        </button>
+
+        <button class="vehicle" data-type="family"
+          data-price="7000" onclick="selectVehicle(this)">
+          <div class="car-icon">🚐</div>
+          <div class="vehicle-info">
+            <strong>سيارة عائلية</strong>
+            <small>للمشاوير العائلية</small>
+          </div>
+          <div class="price">٧٬٠٠٠ د.ع<small>سعر تقديري</small></div>
+        </button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="summary">
+        <div>
+          <small>الأجرة التقديرية</small>
+          <strong id="fare">٣٬٠٠٠ د.ع</strong>
+        </div>
+        <div style="text-align:left">
+          <small>طريقة الدفع</small>
+          <div style="margin-top:7px;font-size:13px">💵 نقداً</div>
+        </div>
+      </div>
+      <button class="primary" onclick="requestTaxi()">اطلب تكسي الآن ←</button>
+      <p class="note">السعر المعروض تجريبي وليس سعراً محسوباً حسب المسافة الفعلية.</p>
+    </section>
+
+    <section id="tripPanel" class="panel hidden">
+      <h3 id="tripTitle">تم إنشاء طلب تجريبي</h3>
+      <p id="tripText"></p>
+      <button class="secondary" onclick="cancelTrip()">إلغاء الطلب</button>
+    </section>
   </div>
 
-  <div class="head">
-    <button class="round">☰</button>
-    <div class="chip">📍 الكرادة، بغداد</div>
-    <button class="round">🔔</button>
+  <div id="driverPage" class="hidden">
+    <section class="section">
+      <h3>لوحة السائق 🛞</h3>
+      <div class="panel">
+        <h3>أهلاً بيك سائقنا</h3>
+        <p>من هنا تكدر تجرب واجهة السائق. الطلبات المعروضة تجريبية وليست طلبات حقيقية من الركاب.</p>
+        <div class="field">
+          <label for="driverName">اسم السائق</label>
+          <input id="driverName" placeholder="اكتب اسمك">
+        </div>
+        <div class="field">
+          <label for="carNumber">رقم السيارة</label>
+          <input id="carNumber" placeholder="رقم لوحة السيارة">
+        </div>
+        <button class="primary" onclick="saveDriver()">حفظ المعلومات</button>
+      </div>
+      <h3>طلبات تجريبية</h3>
+      <div class="driver-card">
+        <div class="driver-emoji">👤</div>
+        <div class="driver-info">
+          <strong>راكب تجريبي ١</strong>
+          <small>من: شارع الحبوبي</small>
+          <small>إلى: مستشفى الناصرية</small>
+          <small>الأجرة التقديرية: ٥٬٠٠٠ د.ع</small>
+        </div>
+        <span class="badge">جديد</span>
+      </div>
+      <button class="primary" onclick="acceptDemo()">قبول الطلب التجريبي</button>
+      <p class="note">قبول الطلب هنا للتجربة فقط، ولا يصل إشعار إلى راكب حقيقي.</p>
+    </section>
   </div>
 
-  <div class="sheet">
-    <div class="grab"></div>
-    <button class="search" onclick="openRide()"><i class="dot"></i><span>إلى أين تريد الذهاب؟</span><b>الآن ⏱</b></button>
-
-    <div class="saved">
-      <button onclick="openRide('البيت')">🏠 البيت</button>
-      <button onclick="openRide('العمل')">💼 العمل</button>
-      <button onclick="openRide('المطار')">✈️ المطار</button>
-      <button onclick="openRide('الجامعة')">🎓 الجامعة</button>
-    </div>
-
-    <div class="grid">
-      <button class="svc" onclick="openRide()"><em>🚕</em><span>تكسي</span></button>
-      <button class="svc" onclick="openRide()"><i>جديد</i><em>🛵</em><span>سكوتر</span></button>
-      <button class="svc" onclick="openRide()"><em>🚺</em><span>للنساء</span></button>
-      <button class="svc" onclick="toast('خدمة التوصيل قريباً')"><em>📦</em><span>توصيل</span></button>
-    </div>
-
-    <div class="promo">
-      <div><h3>أول 3 رحلات بخصم 30%</h3><p>استخدم كود الدعوة عند الطلب</p><button>انسخ الكود: TAXI30</button></div>
-      <div class="em">🎁</div>
-    </div>
-  </div>
-
-  <nav class="nav">
-    <button class="on"><em>🏠</em>الرئيسية</button>
-    <button onclick="toast('رحلاتي')"><em>🧾</em>رحلاتي</button>
-    <button onclick="toast('العروض')"><em>🏷️</em>العروض</button>
-    <button onclick="toast('الحساب')"><em>👤</em>حسابي</button>
-  </nav>
-
-  <!-- Ride screen -->
-  <div class="ride" id="ride">
-    <div class="rtop">
-      <div class="bar"><button class="round" onclick="closeRide()" style="box-shadow:none;background:var(--bg)">→</button><b>اختر رحلتك</b></div>
-      <div class="rt"><div><i></i>موقعي الحالي</div><div><i></i><span id="destTxt">مجمع بغداد التجاري</span></div></div>
-    </div>
-    <div class="list" id="list">
-      <button class="opt sel" data-n="اقتصادي" data-p="4,500"><em>🚕</em><span class="t"><b>اقتصادي</b><small>4 ركاب · 3 دقائق</small></span><span class="pr">4,500</span></button>
-      <button class="opt" data-n="مريح" data-p="6,500"><em>🚙</em><span class="t"><b>مريح</b><small>سيارة حديثة مكيّفة · 5 دقائق</small></span><span class="pr">6,500</span></button>
-      <button class="opt" data-n="عائلي" data-p="9,000"><em>🚐</em><span class="t"><b>عائلي</b><small>حتى 7 ركاب · 7 دقائق</small></span><span class="pr">9,000</span></button>
-      <button class="opt" data-n="للنساء" data-p="6,000"><em>🚺</em><span class="t"><b>للنساء</b><small>سائقات فقط · 8 دقائق</small></span><span class="pr">6,000</span></button>
-    </div>
-    <div class="rbot">
-      <div class="pay"><span>الدفع</span><b>💵 نقداً ‹</b></div>
-      <button class="cta" id="go">تأكيد الطلب · اقتصادي</button>
+  <div id="historyPage" class="hidden">
+    <h3>رحلاتي 📋</h3>
+    <div id="historyContent" class="panel">
+      <p>ما عندك رحلات مسجلة بهذا الجهاز حالياً.</p>
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
+  <div id="profilePage" class="hidden">
+    <h3>حسابي 👤</h3>
+    <div class="panel">
+      <div class="field">
+        <label for="userName">الاسم</label>
+        <input id="userName" placeholder="اكتب اسمك">
+      </div>
+      <div class="field">
+        <label for="userPhone">رقم الهاتف</label>
+        <input id="userPhone" type="tel" placeholder="07xxxxxxxxx">
+      </div>
+      <button class="primary" onclick="saveProfile()">حفظ البيانات على هذه الصفحة</button>
+      <p>هذه نسخة تجريبية؛ البيانات لا تُرسل إلى خادم.</p>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="passenger"
+    onclick="showPage('passenger',this)">
+    <span>🚕</span>الرئيسية
+  </button>
+  <button class="nav-btn" data-page="history"
+    onclick="showPage('history',this)">
+    <span>📋</span>رحلاتي
+  </button>
+  <button class="nav-btn" data-page="profile"
+    onclick="showPage('profile',this)">
+    <span>👤</span>حسابي
+  </button>
+</nav>
 </div>
 
 <script>
-  const $=id=>document.getElementById(id);
-  let sel='اقتصادي';
-  function openRide(place){ if(place) $('destTxt').textContent=place; $('ride').classList.add('open'); }
-  function closeRide(){ $('ride').classList.remove('open'); }
-  function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800);}
-  document.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{
-    document.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));o.classList.add('sel');
-    sel=o.dataset.n;$('go').textContent='تأكيد الطلب · '+sel;
-  });
-  $('go').onclick=()=>{toast('جارٍ البحث عن سائق…');setTimeout(closeRide,900);};
+let selectedVehicle = "economy";
+let fare = 3000;
+let tripActive = false;
+let history = [];
+
+const money = n => n.toLocaleString("ar-IQ") + " د.ع";
+
+function notify(message) {
+  const old = document.querySelector(".toast");
+  if (old) old.remove();
+
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 2800);
+}
+
+function setMode(mode) {
+  document.getElementById("passengerMode")
+    .classList.toggle("active", mode === "passenger");
+  document.getElementById("driverMode")
+    .classList.toggle("active", mode === "driver");
+
+  document.getElementById("passengerPage")
+    .classList.toggle("hidden", mode !== "passenger");
+  document.getElementById("driverPage")
+    .classList.toggle("hidden", mode !== "driver");
+
+  document.getElementById("historyPage").classList.add("hidden");
+  document.getElementById("profilePage").classList.add("hidden");
+
+  document.getElementById("welcomeTitle").textContent =
+    mode === "driver" ? "أهلاً بيك سائقنا 🛞" : "هلا بيك 👋";
+
+  document.getElementById("welcomeText").textContent =
+    mode === "driver" ? "تابع طلبات المشاوير التجريبية" :
+    "وين تحب نوصلك اليوم؟";
+
+  document.querySelectorAll(".nav-btn").forEach(b =>
+    b.classList.toggle("active", b.dataset.page === "passenger" &&
+      mode === "passenger"));
+}
+
+function selectVehicle(button) {
+  document.querySelectorAll(".vehicle").forEach(v =>
+    v.classList.remove("selected"));
+
+  button.classList.add("selected");
+  selectedVehicle = button.dataset.type;
+  fare = Number(button.dataset.price);
+  document.getElementById("fare").textContent = money(fare);
+}
+
+function requestTaxi() {
+  const pickup = document.getElementById("pickup").value.trim();
+  const destination = document.getElementById("destination").value.trim();
+
+  if (!pickup || !destination) {
+    notify("اكتب مكان الانطلاق والوجهة أولاً");
+    return;
+  }
+
+  if (pickup === destination) {
+    notify("اختار وجهة مختلفة عن مكان الانطلاق");
+    return;
+  }
+
+  tripActive = true;
+  const trip = {
+    pickup,
+    destination,
+    fare,
+    vehicle: selectedVehicle,
+    status: "طلب تجريبي"
+  };
+
+  history.unshift(trip);
+  document.getElementById("tripPanel").classList.remove("hidden");
+  document.getElementById("tripTitle").textContent = "تم تسجيل الطلب التجريبي ✅";
+  document.getElementById("tripText").textContent =
+    "من " + pickup + " إلى " + destination +
+    "، الأجرة التقديرية " + money(fare) +
+    ". لا يوجد سائق متصل بهذا النموذج.";
+  renderHistory();
+  notify("تم تسجيل الطلب التجريبي");
+}
+
+function cancelTrip() {
+  if (!tripActive) return;
+  tripActive = false;
+
+  if (history.length) history[0].status = "ملغي";
+  document.getElementById("tripPanel").classList.add("hidden");
+
+  renderHistory();
+  notify("تم إلغاء الطلب التجريبي");
+}
+
+function renderHistory() {
+  const box = document.getElementById("historyContent");
+
+  if (!history.length) {
+    box.innerHTML = "<p>ما عندك رحلات مسجلة بهذا الجهاز حالياً.</p>";
+    return;
+  }
+
+  box.innerHTML = history.map(t => {
+    const card = document.createElement("div");
+    card.style.cssText =
+      "border-bottom:1px solid #e9ebef;padding:12px 0;line-height:1.9";
+
+    const title = document.createElement("strong");
+    title.textContent = "🚕 " + t.pickup + " ← " + t.destination;
+
+    const details = document.createElement("p");
+    details.textContent = money(t.fare) + " · " + t.status;
+
+    card.append(title, details);
+    return card.outerHTML;
+  }).join("");
+}
+
+function saveDriver() {
+  const name = document.getElementById("driverName").value.trim();
+  const car = document.getElementById("carNumber").value.trim();
+
+  if (!name || !car) {
+    notify("اكتب اسم السائق ورقم السيارة");
+    return;
+  }
+
+  notify("تم حفظ البيانات مؤقتاً في الصفحة");
+}
+
+function acceptDemo() {
+  notify("هذا طلب تجريبي، يحتاج خادماً لربطه بالراكب");
+}
+
+function saveProfile() {
+  const name = document.getElementById("userName").value.trim();
+  const phone = document.getElementById("userPhone").value.trim();
+
+  if (!name || !phone) {
+    notify("اكتب الاسم ورقم الهاتف");
+    return;
+  }
+
+  document.getElementById("welcomeTitle").textContent = "هلا " + name + " 👋";
+  notify("تم تحديث الاسم في الواجهة");
+}
+
+function showPage(page, button) {
+  ["passengerPage", "driverPage", "historyPage", "profilePage"]
+    .forEach(id => document.getElementById(id).classList.add("hidden"));
+
+  document.getElementById(
+    page === "passenger" ? "passengerPage" :
+    page === "driver" ? "driverPage" :
+    page === "history" ? "historyPage" : "profilePage"
+  ).classList.remove("hidden");
+
+  document.getElementById("passengerMode").classList.toggle("active", page === "passenger");
+  document.getElementById("driverMode").classList.toggle("active", page === "driver");
+
+  document.getElementById("welcomeTitle").textContent =
+    page === "driver" ? "أهلاً بيك سائقنا 🛞" :
+    page === "history" ? "رحلاتي 📋" :
+    page === "profile" ? "حسابي 👤" : "هلا بيك 👋";
+
+  document.getElementById("welcomeText").textContent =
+    page === "driver" ? "تابع طلبات المشاوير التجريبية" :
+    page === "history" ? "راجع طلباتك التجريبية" :
+    page === "profile" ? "معلومات حسابك" :
+    "وين تحب نوصلك اليوم؟";
+
+  document.querySelectorAll(".nav-btn").forEach(b =>
+    b.classList.toggle("active", b === button));
+
+  if (page === "history") renderHistory();
+}
+
+renderHistory();
 </script>
 </body>
 </html>

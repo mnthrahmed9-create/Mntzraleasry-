@@ -1,82 +1,225 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#126b52">
-  <title>تكسي العراق - نموذج أولي</title>
-  
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
-  <style>
-    :root{--green:#126b52;--green2:#1b8a69;--bg:#f3f6f4;--ink:#17221e;--muted:#5e6f68;--line:#dfe7e3;--card:#fff;--shadow:0 10px 30px rgba(18,107,82,.12)}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:var(--ink)}
-    .app{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:20px}
-    .top{background:var(--green);color:#fff;padding:20px;border-radius:0 0 24px 24px;box-shadow:var(--shadow)}
-    .brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-    .logo{height:48px;width:48px;border-radius:16px;background:var(--green2);display:grid;place-items:center;font-size:24px}
-    h1{font-size:20px;margin:0} .top p{margin:4px 0 0;font-size:13px;opacity:.8}
-    .switch{display:flex;background:rgba(255,255,255,.12);border-radius:14px;padding:4px}
-    .switch button{flex:1;border:0;background:transparent;color:#fff;padding:10px;border-radius:10px;font-weight:700;font-family:inherit;font-size:14px;cursor:pointer}
-    .switch button.active{background:#fff;color:var(--green)}
-    main{padding:16px}
-    .card{background:var(--card);border-radius:20px;padding:16px;box-shadow:var(--shadow);margin-top:16px}
-    h2{font-size:16px;margin:0 0 12px}
-    #map{height:250px;width:100%;border-radius:16px;margin-bottom:16px;z-index:1;background:#eef4f0}
-    .field{margin-bottom:12px}
-    .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
-    .field input,.field select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:14px;background:#fafcfb;color:var(--ink);outline:none}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .fare{display:flex;justify-content:space-between;align-items:center;background:#f7fbf9;border:1px solid var(--line);border-radius:16px;padding:14px;margin:16px 0}
-    .primary{width:100%;border:0;background:var(--green);color:#fff;font-family:inherit;font-size:16px;font-weight:800;padding:16px;border-radius:14px;cursor:pointer}
-    .hint{text-align:center;font-size:12px;color:var(--muted);margin-top:12px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>طلب تكسي</title>
+    <!-- مكتبة الخريطة -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* يمنع السكرول */
+        }
+
+        /* الخريطة تاخذ كامل الشاشة */
+        #map {
+            height: 100vh;
+            width: 100vw;
+            z-index: 1;
+        }
+
+        /* الشريط العلوي */
+        .top-bar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-radius: 15px;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-weight: bold;
+        }
+
+        /* الدبوس الثابت بالنص */
+        .center-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%); /* يخلي راس الدبوس بالنص بالضبط */
+            z-index: 1000;
+            font-size: 40px;
+            pointer-events: none; /* يخلي المستخدم يكدر يحرك الخريطة من تحت الدبوس */
+            margin-top: -10px; /* تعديل بسيط عشان النص */
+        }
+
+        /* أزرار التكبير والتصغير */
+        .map-controls {
+            position: absolute;
+            top: 80px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .map-controls button {
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        /* زر تحديد الموقع */
+        .locate-btn {
+            position: absolute;
+            top: 180px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* الشريط السفلي */
+        .bottom-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #f0f2f5;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+        .search-box input {
+            border: none;
+            background: transparent;
+            flex: 1;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+        }
+        .search-box span {
+            font-size: 20px;
+            margin-left: 10px;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            background: #2d6cdf;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="app">
-    <header class="top">
-      <div class="brand"><div class="logo">🚕</div><div><h1>تكسي العراق</h1><p>مشوارك أسهل وأقرب</p></div></div>
-      <div class="switch">
-        <button id="riderTab" class="active">أنا راكب</button>
-        <button id="driverTab">أنا سائق</button>
-      </div>
-    </header>
-    <main>
-      <section id="riderView">
-        <div class="card">
-          <h2>وين تحب تروح؟</h2>
-          <div id="map"></div>
-          <div class="field"><label>مكان الانطلاق</label><input placeholder="مثال: حيك أو أقرب نقطة"></div>
-          <div class="field"><label>الوجهة</label><input placeholder="وين تريد تروح؟"></div>
-          <div class="row">
-            <div class="field"><label>اسم الراكب</label><input placeholder="اسمك"></div>
-            <div class="field"><label>رقم الهاتف</label><input placeholder="07xxxxxxxxx"></div>
-          </div>
-          <div class="row">
-            <div class="field"><label>نوع السيارة</label><select><option>عادية</option><option>مكيفة</option></select></div>
-            <div class="field"><label>المسافة (كم)</label><input type="number" value="5"></div>
-          </div>
-          <div class="fare">
-            <div>
-              <span style="font-size:12px;color:var(--muted)">السعر المتوقع</span>
-              <div style="font-size:24px;font-weight:900;color:var(--green)">5,000 د.ع</div>
-            </div>
-          </div>
-          <button class="primary">حدد مشوارك</button>
-          <p class="hint">أو إرسال طلبات لسائقين عبر الإنترنت</p>
-        </div>
-      </section>
-    </main>
-  </div>
 
-  <script>
-    var map = L.map('map').setView([33.3152, 44.3661], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(map);
-    var marker = L.marker([33.3152, 44.3661]).addTo(map);
-    marker.bindPopup("موقعك الحالي").openPopup();
-  </script>
+    <!-- الدبوس الثابت -->
+    <div class="center-pin">📍</div>
+
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <span>></span>
+        <span>🚕 طلب تكسي</span>
+        <span>محافظة ذي قار ⌄</span>
+    </div>
+
+    <!-- أزرار التحكم -->
+    <div class="map-controls">
+        <button id="zoomIn">+</button>
+        <button id="zoomOut">-</button>
+    </div>
+    <button class="locate-btn" id="locateBtn" title="موقعي الحالي">◎</button>
+
+    <!-- الخريطة -->
+    <div id="map"></div>
+
+    <!-- الشريط السفلي -->
+    <div class="bottom-panel">
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="searchInput" placeholder="ابحث عن مكان الانطلاق">
+        </div>
+        <button class="confirm-btn" onclick="confirmLocation()">
+            تثبيت الانطلاق 📍
+        </button>
+    </div>
+
+    <script>
+        // إحداثيات محافظة ذي قار (الناصرية) بناءً على صورتك
+        var lat = 31.0439;
+        var lng = 46.2573;
+
+        // إنشاء الخريطة
+        var map = L.map('map', {
+            zoomControl: false // إخفاء أزرار التكبير الافتراضية عشان نستخدم مالتنا
+        }).setView([lat, lng], 15);
+
+        // إضافة شكل الخريطة
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // تفعيل أزرار التكبير والتصغير
+        document.getElementById('zoomIn').onclick = function() { map.zoomIn(); };
+        document.getElementById('zoomOut').onclick = function() { map.zoomOut(); };
+
+        // زر تحديد موقعي الحالي (GPS)
+        document.getElementById('locateBtn').onclick = function() {
+            map.locate({setView: true, maxZoom: 16});
+        };
+
+        // دالة تطلعلك الإحداثيات لما تدوس على زر "تثبيت الانطلاق"
+        function confirmLocation() {
+            // نجيب مركز الخريطة (اللي هوا مكان الدبوس)
+            var center = map.getCenter();
+            var lat = center.lat.toFixed(4);
+            var lng = center.lng.toFixed(4);
+            
+            alert("تم تحديد مكان الانطلاق!\nخط العرض: " + lat + "\nخط الطول: " + lng);
+            
+            // هنا تكدر تضيف كود يحفظ الموقع بقاعدة بيانات مستقبلاً
+        }
+
+        // إضافة بحث بسيط (اختياري - يبحث بالخريطة)
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                // كود البحث الحقيقي يحتاج API، هذا مجرد مثال
+                alert("البحث عن: " + this.value + "\n(هذه الميزة تحتاج ربط بخدمة بحث مثل Nominatim)");
+            }
+        });
+    </script>
 </body>
 </html>

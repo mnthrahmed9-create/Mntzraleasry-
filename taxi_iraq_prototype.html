@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#126b52">
+<title>تكسي العراق - نموذج أولي</title>
+<style>
+:root{--green:#126b52;--green2:#1b8a69;--bg:#f3f6f4;--ink:#17221e;--muted:#6b7771;--line:#dce5df;--white:#fff;--gold:#f5bd45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer;border:0;border-radius:14px;padding:13px 16px;font-weight:700}.app{max-width:520px;min-height:100vh;margin:auto;background:var(--bg);padding-bottom:26px}.top{background:linear-gradient(135deg,var(--green),#0a493a);color:#fff;padding:24px 20px 20px;border-radius:0 0 26px 26px}.brand{display:flex;align-items:center;gap:12px}.logo{height:48px;width:48px;border-radius:16px;background:#ffffff20;display:grid;place-items:center;font-size:25px}.brand h1{font-size:21px;margin:0 0 5px}.brand p{margin:0;color:#d8eee6;font-size:13px}.pill{margin-right:auto;background:#ffffff20;color:#fff;padding:8px 10px;border-radius:99px;font-size:12px}.switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#ffffff1c;padding:5px;border-radius:16px;margin-top:22px}.switch button{background:transparent;color:#e6f4ef}.switch button.active{background:#fff;color:var(--green)}main{padding:18px}.card{background:var(--white);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 4px 18px #183c2c08}.card h2{font-size:17px;margin:0 0 14px}.field{margin-bottom:12px}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px}.field input,.field select{width:100%;border:1px solid var(--line);background:#fbfdfb;border-radius:12px;padding:13px;outline:none;color:var(--ink)}.field input:focus,.field select:focus{border-color:var(--green2)}.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}.primary{background:var(--green);color:#fff;width:100%}.secondary{background:#e6f2ec;color:var(--green);width:100%}.hint{font-size:12px;line-height:1.7;color:var(--muted);margin:10px 0 0}.map{height:155px;border-radius:16px;background:linear-gradient(135deg,#dcebe1,#eaf0d8);position:relative;overflow:hidden;margin-bottom:14px;display:grid;place-items:center;color:#46695a;text-align:center}.map:before,.map:after{content:"";position:absolute;width:140%;height:22px;background:#fff9;transform:rotate(-20deg);top:44px;right:-30px;border:1px solid #d0dfd3}.map:after{transform:rotate(28deg);top:100px}.pin{position:relative;z-index:1;background:var(--green);color:white;padding:10px 14px;border-radius:20px;box-shadow:0 4px 12px #174c3a33}.fare{display:flex;align-items:center;justify-content:space-between;padding:12px;background:#f3f8f4;border-radius:13px;margin-bottom:13px}.fare strong{font-size:20px;color:var(--green)}.status{border-radius:12px;padding:12px;background:#fff6df;color:#795916;font-size:13px;line-height:1.7;margin-bottom:12px}.status.ok{background:#e7f5ed;color:#176344}.trip{border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0}.trip strong{display:block;margin-bottom:6px}.trip p{margin:5px 0;color:var(--muted);font-size:13px}.tag{display:inline-block;background:#e8f4ed;color:var(--green);border-radius:99px;padding:5px 9px;font-size:11px;font-weight:bold}.empty{text-align:center;padding:20px;color:var(--muted);font-size:13px}.hidden{display:none!important}.foot{text-align:center;font-size:11px;color:#87918b;padding:4px 18px 18px}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="brand"><div class="logo">🚕</div><div><h1>تكسي العراق</h1><p>مشوارك أسهل وأقرب</p></div><span class="pill">نقدي</span></div>
+ <div class="switch"><button id="riderTab" class="active" onclick="setMode('rider')">أنا راكب</button><button id="driverTab" onclick="setMode('driver')">أنا سائق</button></div>
+</header>
+<main>
+<section id="riderView">
+ <div class="card">
+  <h2>وين تحب تروح؟</h2>
+  <div class="map"><div class="pin">📍 حدّد مشوارك</div></div>
+  <div class="field"><label for="pickup">مكان الانطلاق</label><input id="pickup" placeholder="مثال: حيّك أو أقرب نقطة"></div>
+  <div class="field"><label for="destination">الوجهة</label><input id="destination" placeholder="وين تريد تروح؟"></div>
+  <div class="row">
+   <div class="field"><label for="passenger">اسم الراكب</label><input id="passenger" placeholder="اسمك"></div>
+   <div class="field"><label for="phone">رقم الهاتف</label><input id="phone" inputmode="tel" placeholder="07xxxxxxxxx"></div>
+  </div>
+  <div class="row">
+   <div class="field"><label for="carType">نوع السيارة</label><select id="carType"><option>عادية</option><option>عائلية</option><option>كبيرة</option></select></div>
+   <div class="field"><label for="distance">المسافة التقديرية (كم)</label><input id="distance" type="number" min="1" value="5"></div>
+  </div>
+  <div class="fare"><div><span style="font-size:12px;color:var(--muted)">الأجرة التقديرية</span><br><small>تُدفع للسائق نقداً</small></div><strong id="fare">٥٬٠٠٠ د.ع</strong></div>
+  <button class="primary" onclick="requestRide()">اطلب تكسي</button>
+  <p class="hint">هذا نموذج تجريبي: أدخل بيانات تجريبية فقط. لا توجد حالياً خريطة حقيقية أو إرسال طلبات لسائقين عبر الإنترنت.</p>
+ </div>
+ <div id="riderStatus" class="card hidden"></div>
+</section>
+<section id="driverView" class="hidden">
+ <div class="card">
+  <h2>لوحة السائق</h2>
+  <div class="status">هذا نموذج تجريبي للسائق. الطلبات تظهر هنا على نفس الجهاز فقط، وليست متصلة بركاب آخرين عبر الإنترنت.</div>
+  <div class="field"><label for="driverName">اسم السائق</label><input id="driverName" placeholder="اكتب اسمك"></div>
+  <div class="field"><label for="driverPhone">رقم هاتف السائق</label><input id="driverPhone" inputmode="tel" placeholder="07xxxxxxxxx"></div>
+  <button class="secondary" onclick="saveDriver()">حفظ بيانات السائق</button>
+ </div>
+ <div class="card"><h2>الطلبات المتاحة</h2><div id="requests"><div class="empty">ماكو طلبات حالياً. أنشئ طلباً من وضع الراكب على هذا الجهاز للتجربة.</div></div></div>
+ <div class="card"><h2>رحلاتي</h2><div id="driverTrips"><div class="empty">الرحلات المقبولة راح تظهر هنا.</div></div></div>
+</section>
+</main>
+<div class="foot">نسخة أولية للتجربة • تكسي العراق</div>
+</div>
+<script>
+let mode='rider', rides=[], nextId=1, driver={name:'',phone:''};
+const money=n=>Math.round(n).toLocaleString('ar-IQ')+' د.ع';
+const el=id=>document.getElementById(id);
+function fareValue(){let d=Number(el('distance').value)||0;return Math.max(0,d)*1000}
+function refreshFare(){el('fare').textContent=money(fareValue())}
+el('distance').addEventListener('input',refreshFare);
+function setMode(m){mode=m;el('riderView').classList.toggle('hidden',m!=='rider');el('driverView').classList.toggle('hidden',m!=='driver');el('riderTab').classList.toggle('active',m==='rider');el('driverTab').classList.toggle('active',m==='driver');renderRides()}
+function requestRide(){
+ const pickup=el('pickup').value.trim(), destination=el('destination').value.trim(), passenger=el('passenger').value.trim(), phone=el('phone').value.trim(), distance=Number(el('distance').value);
+ if(!pickup||!destination||!passenger||!phone||!distance||distance<=0){alert('رجاءً املأ الاسم والهاتف والانطلاق والوجهة والمسافة بشكل صحيح.');return}
+ const ride={id:nextId++,pickup,destination,passenger,phone,distance,car:el('carType').value,fare:fareValue(),status:'بانتظار سائق'};
+ rides.unshift(ride);el('riderStatus').classList.remove('hidden');el('riderStatus').innerHTML='<div class="status ok">تم إنشاء طلب تجريبي بنجاح</div><h2>تفاصيل الطلب #'+ride.id+'</h2><p>من: '+esc(pickup)+'</p><p>إلى: '+esc(destination)+'</p><p>الأجرة التقديرية: <b>'+money(ride.fare)+'</b></p><p>الحالة: <b id="rideState">'+ride.status+'</b></p><p class="hint">هذا الطلب محفوظ داخل الصفحة الحالية فقط.</p>';renderRides();alert('تم إنشاء طلب تجريبي. افتح وضع السائق لتجربة قبول الطلب على نفس الجهاز.');
+}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function saveDriver(){driver.name=el('driverName').value.trim();driver.phone=el('driverPhone').value.trim();if(!driver.name||!driver.phone){alert('اكتب اسم السائق ورقم هاتفه.');return}alert('تم حفظ البيانات داخل هذه الصفحة للتجربة فقط.');}
+function renderRides(){
+ let req=el('requests'), trips=el('driverTrips');const pending=rides.filter(r=>r.status==='بانتظار سائق');const accepted=rides.filter(r=>r.status!=='بانتظار سائق');
+ req.innerHTML=pending.length?pending.map(r=>'<div class="trip"><span class="tag">طلب جديد</span><strong>رحلة #'+r.id+' • '+esc(r.passenger)+'</strong><p>📍 من: '+esc(r.pickup)+'</p><p>🏁 إلى: '+esc(r.destination)+'</p><p>🚘 '+esc(r.car)+' • '+r.distance+' كم</p><p>💵 '+money(r.fare)+' نقداً</p><button class="primary" style="margin-top:8px" onclick="acceptRide('+r.id+')">قبول الرحلة</button></div>').join(''):'<div class="empty">ماكو طلبات بانتظار سائق.</div>';
+ trips.innerHTML=accepted.length?accepted.map(r=>'<div class="trip"><strong>رحلة #'+r.id+' • '+esc(r.passenger)+'</strong><p>من: '+esc(r.pickup)+' ← إلى: '+esc(r.destination)+'</p><p>الحالة: <b>'+r.status+'</b></p><p>رقم الراكب: '+esc(r.phone)+'</p>'+(r.status==='تم قبول الرحلة'?'<button class="secondary" style="margin-top:8px" onclick="finishRide('+r.id+')">إنهاء الرحلة</button>':'')+'</div>').join(''):'<div class="empty">الرحلات المقبولة راح تظهر هنا.</div>';
+}
+function acceptRide(id){const r=rides.find(x=>x.id===id);if(!r)return;r.status='تم قبول الرحلة';renderRides();alert('تم قبول الرحلة تجريبياً.');}
+function finishRide(id){const r=rides.find(x=>x.id===id);if(!r)return;r.status='مكتملة';renderRides();alert('تم إنهاء الرحلة تجريبياً. الأجرة تُدفع نقداً للسائق.');}
+refreshFare();
+</script>
+</body>
+</html>

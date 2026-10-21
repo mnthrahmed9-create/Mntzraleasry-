@@ -3,306 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>طلب تكسي</title>
+    <title>تكسي العراق</title>
+    <!-- مكتبة الخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            background: #f8f9fa;
-        }
+        /* إعدادات عامة */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body, html { height: 100%; overflow: hidden; background: #f8f9fa; }
 
-        #map {
-            height: 100vh;
-            width: 100vw;
-            z-index: 1;
-        }
-
-        /* الشريط العلوي */
-        .top-bar {
+        /* ---- 1. شاشة تسجيل الدخول ---- */
+        #login-screen {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            background: white;
-            border-radius: 15px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .top-bar .menu-icon { font-size: 20px; cursor: pointer; color: #555; }
-        .top-bar .title { color: #111; }
-
-        /* الدبوس الثابت */
-        .center-pin {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -100%);
-            z-index: 1000;
-            font-size: 45px;
-            pointer-events: none;
-            margin-top: -5px;
-            filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.3));
-        }
-
-        /* أزرار الخريطة الجانبية */
-        .map-controls {
-            position: absolute;
-            top: 90px;
-            right: 15px;
-            z-index: 1000;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #126b52, #1b8a69);
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-        .map-controls button, .locate-btn {
-            background: white;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            font-size: 22px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            cursor: pointer;
-            display: flex;
             justify-content: center;
             align-items: center;
-            color: #333;
-        }
-        .locate-btn {
-            position: absolute;
-            top: 200px;
-            right: 15px;
-            z-index: 1000;
-        }
-
-        /* الشريط السفلي التفاعلي (Bottom Sheet) */
-        .bottom-sheet {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 25px 25px 0 0;
             padding: 20px;
-            z-index: 1000;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            padding-bottom: 30px; /* مساحة للشريط السفلي */
+            z-index: 2000;
+            transition: opacity 0.4s ease;
         }
-
-        /* شريط البحث */
-        .search-container {
+        .login-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px 20px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .login-logo { font-size: 60px; margin-bottom: 10px; }
+        .login-title { font-size: 24px; font-weight: bold; color: #126b52; margin-bottom: 5px; }
+        .login-subtitle { font-size: 14px; color: #666; margin-bottom: 30px; }
+        
+        .input-group {
             display: flex;
             align-items: center;
             background: #f0f2f5;
             border-radius: 12px;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e1e4e8;
+            direction: ltr; /* عشان الرقم يكتب صح */
+        }
+        .input-group span { font-size: 18px; margin-right: 10px; color: #555; font-weight: bold; }
+        .input-group input {
+            border: none; background: transparent; flex: 1;
+            font-size: 18px; outline: none; font-weight: bold; color: #333;
+        }
+        
+        .btn-main {
+            width: 100%; background: #126b52; color: white; border: none;
+            padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-main:active { background: #0d4f3d; }
+
+        /* ---- 2. شاشة الخريطة (تكون مخفية بالبداية) ---- */
+        #app-screen {
+            display: none; /* مخفية لحد ما يسجل دخول */
+            height: 100%; width: 100%; position: relative;
+        }
+        #map { height: 100vh; width: 100vw; z-index: 1; }
+        
+        /* الشريط العلوي */
+        .top-bar {
+            position: absolute; top: 15px; left: 15px; right: 15px;
+            background: white; border-radius: 15px; padding: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            font-weight: bold; font-size: 16px;
+        }
+        
+        /* الدبوس الثابت بالنص */
+        .center-pin {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -100%);
+            z-index: 1000; font-size: 45px; pointer-events: none;
+            margin-top: -5px; filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.3));
+        }
+
+        /* أزرار الخريطة */
+        .map-controls {
+            position: absolute; top: 90px; right: 15px; z-index: 1000;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .map-controls button, .locate-btn {
+            background: white; border: none; width: 45px; height: 45px;
+            border-radius: 50%; font-size: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+        }
+        .locate-btn { position: absolute; top: 200px; right: 15px; z-index: 1000; }
+
+        /* الشريط السفلي */
+        .bottom-sheet {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: white; border-radius: 25px 25px 0 0; padding: 20px;
+            z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            padding-bottom: 30px;
+        }
+        .search-box {
+            display: flex; align-items: center; background: #f0f2f5;
+            border-radius: 12px; padding: 15px; margin-bottom: 15px;
             border: 1px solid #e1e4e8;
         }
-        .search-container input {
-            border: none;
-            background: transparent;
-            flex: 1;
-            font-size: 16px;
-            font-family: inherit;
-            outline: none;
+        .search-box input {
+            border: none; background: transparent; flex: 1;
+            font-size: 16px; outline: none;
         }
-        .search-container span { font-size: 20px; margin-left: 10px; color: #888; }
-
-        /* زر التثبيت */
-        .confirm-btn {
-            width: 100%;
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            font-family: inherit;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        /* خيارات السيارات (تظهر بعد التثبيت) */
-        .ride-options { display: none; }
-        .ride-options.active { display: block; }
-        .search-view.hidden { display: none; }
-
-        .option-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border: 1px solid #e1e4e8;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .option-item:hover, .option-item.selected {
-            background: #f0f7ff;
-            border-color: #2563eb;
-        }
-        .option-info { display: flex; align-items: center; gap: 15px; }
-        .option-icon { font-size: 28px; }
-        .option-details h4 { margin: 0; font-size: 16px; color: #111; }
-        .option-details p { margin: 2px 0 0; font-size: 12px; color: #666; }
-        .option-price { font-weight: bold; color: #111; font-size: 16px; }
-
-        /* شريط التنقل السفلي */
-        .bottom-nav {
-            display: flex;
-            justify-content: space-around;
-            padding-top: 15px;
-            margin-top: 15px;
-            border-top: 1px solid #eee;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 12px;
-            color: #888;
-            cursor: pointer;
-        }
-        .nav-item.active { color: #2563eb; font-weight: bold; }
-        .nav-item span { font-size: 22px; margin-bottom: 4px; }
-
+        .search-box span { font-size: 20px; margin-left: 10px; color: #888; }
     </style>
 </head>
 <body>
 
-    <div class="center-pin">📍</div>
-
-    <div class="top-bar">
-        <span class="menu-icon">☰</span>
-        <span class="title">🚕 طلب تكسي</span>
-        <span>ذ�� قار ⌄</span>
-    </div>
-
-    <div class="map-controls">
-        <button id="zoomIn">+</button>
-        <button id="zoomOut">-</button>
-    </div>
-    <button class="locate-btn" id="locateBtn">◎</button>
-
-    <div id="map"></div>
-
-    <div class="bottom-sheet">
-        <!-- واجهة البحث -->
-        <div class="search-view" id="searchView">
-            <div class="search-container">
-                <span>🔍</span>
-                <input type="text" id="destInput" placeholder="إلى أين تريد الذهاب؟">
+    <!-- ================= 1. شاشة تسجيل الدخول ================= -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-logo">🚕</div>
+            <div class="login-title">تكسي العراق</div>
+            <div class="login-subtitle">أهلاً بك، يرجى إدخال رقم هاتفك للمتابعة</div>
+            
+            <div class="input-group">
+                <span>🇮🇶 +964</span>
+                <input type="tel" id="phoneInput" placeholder="7XX XXX XXXX" maxlength="11">
             </div>
-            <button class="confirm-btn" onclick="showRides()">
+            
+            <button class="btn-main" onclick="login()">متابعة</button>
+        </div>
+    </div>
+
+    <!-- ================= 2. شاشة الخريطة ================= -->
+    <div id="app-screen">
+        <div class="center-pin">📍</div>
+        
+        <div class="top-bar">
+            <span>☰</span>
+            <span>🚕 طلب تكسي</span>
+            <span>بغداد ⌄</span>
+        </div>
+
+        <div class="map-controls">
+            <button id="zoomIn">+</button>
+            <button id="zoomOut">-</button>
+        </div>
+        <button class="locate-btn" id="locateBtn">◎</button>
+
+        <div id="map"></div>
+
+        <div class="bottom-sheet">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" placeholder="إلى أين تريد الذهاب؟">
+            </div>
+            <button class="btn-main" onclick="requestRide()">
                 تأكيد موقع الانطلاق 📍
             </button>
         </div>
-
-        <!-- واجهة اختيار السيارة -->
-        <div class="ride-options" id="rideOptions">
-            <h3 style="margin: 0 0 15px; font-size: 18px;">اختر وسيلة النقل</h3>
-            
-            <div class="option-item selected" onclick="selectRide(this, '5,000')">
-                <div class="option-info">
-                    <span class="option-icon">🚗</span>
-                    <div class="option-details">
-                        <h4>تكسي عادي</h4>
-                        <p>3 دقائق (قريب جداً)</p>
-                    </div>
-                </div>
-                <div class="option-price">5,000 د.ع</div>
-            </div>
-
-            <div class="option-item" onclick="selectRide(this, '7,500')">
-                <div class="option-info">
-                    <span class="option-icon">🚙</span>
-                    <div class="option-details">
-                        <h4>تكسي مكيف</h4>
-                        <p>5 دقائق</p>
-                    </div>
-                </div>
-                <div class="option-price">7,500 د.ع</div>
-            </div>
-
-            <button class="confirm-btn" onclick="requestRide()" style="background: #10b981; margin-top: 5px;">
-                طلب التكسي الآن
-            </button>
-        </div>
-
-        <!-- شريط التنقل -->
-        <div class="bottom-nav">
-            <div class="nav-item active" onclick="resetView()">
-                <span>🏠</span>
-                الرئيسية
-            </div>
-            <div class="nav-item">
-                <span>🕒</span>
-                رحلاتي
-            </div>
-            <div class="nav-item">
-                <span>👤</span>
-                حسابي
-            </div>
-        </div>
     </div>
 
+    <!-- ================= كود البرمجة (JavaScript) ================= -->
     <script>
-        var lat = 31.0439;
-        var lng = 46.2573;
+        var map; // متغير عشان نحتفظ بالخريطة
 
-        var map = L.map('map', { zoomControl: false }).setView([lat, lng], 15);
+        // 1. دالة تسجيل الدخول
+        function login() {
+            var phone = document.getElementById('phoneInput').value;
+            if (phone.length < 10) {
+                alert("الرجاء إدخال رقم هاتف صحيح (11 رقم)");
+                return;
+            }
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
-        document.getElementById('zoomIn').onclick = function() { map.zoomIn(); };
-        document.getElementById('zoomOut').onclick = function() { map.zoomOut(); };
-        document.getElementById('locateBtn').onclick = function() { map.locate({setView: true, maxZoom: 16}); };
-
-        // دالة الانتقال لواجهة السيارات
-        function showRides() {
-            document.getElementById('searchView').classList.add('hidden');
-            document.getElementById('rideOptions').classList.add('active');
+            // إخفاء شاشة الدخول وإظهار شاشة الخريطة
+            document.getElementById('login-screen').style.opacity = '0';
+            setTimeout(function() {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-screen').style.display = 'block';
+                
+                // تشغيل الخريطة (لازم نشغلها بعد ما تظهر الشاشة)
+                initMap(); 
+            }, 400); // ننتظر نصف ثانية عشان تخلص الحركة
         }
 
-        // دالة الرجوع للواجهة الرئيسية
-        function resetView() {
-            document.getElementById('searchView').classList.remove('hidden');
-            document.getElementById('rideOptions').classList.remove('active');
+        // 2. دالة تشغيل الخريطة
+        function initMap() {
+            var lat = 33.3152; // بغداد
+            var lng = 44.3661;
+
+            map = L.map('map', { zoomControl: false }).setView([lat, lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            // إصلاح مشكلة الخريطة الرمادية (لأنها كانت مخفية)
+            setTimeout(function(){ map.invalidateSize(); }, 200);
+
+            // أزرار التكبير
+            document.getElementById('zoomIn').onclick = function() { map.zoomIn(); };
+            document.getElementById('zoomOut').onclick = function() { map.zoomOut(); };
+            
+            // زر تحديد الموقع
+            document.getElementById('locateBtn').onclick = function() { 
+                map.locate({setView: true, maxZoom: 16}); 
+            };
         }
 
-        // دالة اختيار السيارة
-        function selectRide(element, price) {
-            var items = document.querySelectorAll('.option-item');
-            items.forEach(function(item) {
-                item.classList.remove('selected');
-            });
-            element.classList.add('selected');
-        }
-
-        // دالة طلب التكسي
+        // 3. دالة طلب الرحلة
         function requestRide() {
-            alert("تم إرسال طلبك بنجاح! 🚕\nالسائق في الطريق إليك.");
+            var center = map.getCenter();
+            alert("تم تحديد موقع الانطلاق!\nخط العرض: " + center.lat.toFixed(4) + "\nخط الطول: " + center.lng.toFixed(4) + "\n\nجاري البحث عن سائق...");
+            // هنا راح نضيف كود إظهار السيارات مستقبلاً
         }
     </script>
 </body>

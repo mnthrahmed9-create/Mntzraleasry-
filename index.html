@@ -1,320 +1,206 @@
 
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تاكسي العراق</title>
+                                  if (pickup != null)
+                                    Marker(
+                                      point: pickup!,
+                                      width: 45,
+                                      height: 45,
+                                      child: const Icon(
+                                        Icons.location_pin,
+                                        color: turquoise,
+                                        size: 42,
+                                      ),
+                                    ),
+                                  if (destination != null)
+                                    Marker(
+                                      point: destination!,
+                                      width: 45,
+                                      height: 45,
+                                      child: const Icon(
+                                        Icons.flag,
+                                        color: orange,
+                                        size: 38,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const RichAttributionWidget(
+                                attributions: [
+                                  TextSourceAttribution(
+                                    '© OpenStreetMap contributors',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
 
-<style>
-* {
-  box-sizing: border-box;
-}
+                    const SizedBox(height: 8),
+                    Text(message),
 
-body {
-  margin: 0;
-  font-family: Tahoma, Arial, sans-serif;
-  background: linear-gradient(135deg, #e0fff7, #fff4cf);
-  color: #183b4e;
-}
+                    TextButton.icon(
+                      onPressed: locateMe,
+                      icon: const Icon(Icons.my_location),
+                      label: const Text('حدد موقعي الحالي'),
+                    ),
 
-.container {
-  max-width: 500px;
-  margin: auto;
-  padding: 18px;
-}
+                    const SizedBox(height: 10),
+                    textField(
+                      'رقم هاتفك',
+                      phoneController,
+                      Icons.phone,
+                    ),
 
-.header {
-  background: linear-gradient(135deg, #00cba9, #00a6ff);
-  color: white;
-  padding: 25px 20px;
-  border-radius: 25px;
-  box-shadow: 0 8px 20px #00a6ff33;
-}
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: orange,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.all(16),
+                        ),
+                        onPressed: requestRide,
+                        child: Text(
+                          'اطلب $service 🚕',
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ] else
+              card(
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'واجهة السائق 🚘',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'واجهة السائق أولية. استقبال طلبات الركاب الحقيقيين يحتاج إلى خادم وقاعدة بيانات.',
+                    ),
+                  ],
+                ),
+              ),
 
-.header h1 {
-  margin: 0 0 8px;
-  font-size: 27px;
-}
+            const SizedBox(height: 15),
 
-.header p {
-  margin: 0;
-  font-size: 14px;
-}
-
-.car {
-  font-size: 48px;
-  margin-bottom: 10px;
-}
-
-.switch {
-  display: flex;
-  gap: 10px;
-  margin: 18px 0;
-}
-
-.switch button {
-  flex: 1;
-  border: none;
-  padding: 14px;
-  border-radius: 15px;
-  background: white;
-  color: #183b4e;
-  font-size: 16px;
-  font-weight: bold;
-  box-shadow: 0 4px 12px #183b4e12;
-}
-
-.switch button.active {
-  background: #ffbf36;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 22px;
-  margin-bottom: 16px;
-  box-shadow: 0 6px 20px #183b4e10;
-}
-
-h2 {
-  font-size: 19px;
-  margin-top: 0;
-}
-
-.services {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.service {
-  border: 2px solid transparent;
-  border-radius: 17px;
-  padding: 15px 5px;
-  background: #e8fbff;
-  color: #183b4e;
-  font-weight: bold;
-}
-
-.service:nth-child(2) {
-  background: #fff2d4;
-}
-
-.service:nth-child(3) {
-  background: #f2e8ff;
-}
-
-.service.active {
-  border-color: #00bfa5;
-}
-
-.emoji {
-  display: block;
-  font-size: 30px;
-  margin-bottom: 8px;
-}
-
-label {
-  display: block;
-  margin: 16px 0 8px;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-input, select {
-  width: 100%;
-  padding: 14px;
-  border: 2px solid #e3edf0;
-  border-radius: 13px;
-  background: #f9fcfd;
-  font-size: 15px;
-  outline: none;
-}
-
-input:focus, select:focus {
-  border-color: #00bfa5;
-}
-
-.map {
-  height: 160px;
-  margin-top: 16px;
-  border-radius: 17px;
-  background: linear-gradient(135deg, #b9f3dd, #d6f4ff);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #167d73;
-  font-weight: bold;
-  line-height: 2;
-}
-
-.primary {
-  width: 100%;
-  margin-top: 20px;
-  padding: 16px;
-  border: none;
-  border-radius: 15px;
-  background: linear-gradient(90deg, #ffb52e, #ff7a35);
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  box-shadow: 0 6px 15px #ff8c3540;
-}
-
-.primary:active {
-  transform: scale(0.98);
-}
-
-.note {
-  text-align: center;
-  color: #71858d;
-  font-size: 12px;
-  padding: 10px;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-  <header class="header">
-    <div class="car">🚕</div>
-    <h1>تاكسي العراق</h1>
-    <p>مشوارك أسهل، أسرع، وأحلى!</p>
-  </header>
-
-  <div class="switch">
-    <button class="active" onclick="showMode('passenger', this)">
-      🙋 راكب
-    </button>
-    <button onclick="showMode('driver', this)">
-      🚘 سائق
-    </button>
-  </div>
-
-  <section class="card" id="passenger">
-    <h2>وين تريد تروح؟ 📍</h2>
-
-    <div class="services">
-      <button class="service active" onclick="chooseService(this)">
-        <span class="emoji">🚕</span>
-        سيارة
-      </button>
-
-      <button class="service" onclick="chooseService(this)">
-        <span class="emoji">🛺</span>
-        تك تك
-      </button>
-
-      <button class="service" onclick="chooseService(this)">
-        <span class="emoji">📦</span>
-        توصيل
-      </button>
-    </div>
-
-    <label>مكان الانطلاق</label>
-    <input id="pickup" placeholder="وين نجي ناخذك؟">
-
-    <label>مكان الوصول</label>
-    <input id="destination" placeholder="وين تريد تروح؟">
-
-    <div class="map">
-      🗺️<br>
-      مكان الخريطة<br>
-      <small>تُربط بخريطة حقيقية لاحقاً</small>
-    </div>
-
-    <label>رقم هاتفك</label>
-    <input type="tel" placeholder="07xxxxxxxxx">
-
-    <label>طريقة الدفع</label>
-    <select>
-      <option>💵 نقداً</option>
-      <option>📱 محفظة إلكترونية</option>
-    </select>
-
-    <button class="primary" onclick="bookRide()">
-      اطلب مشوارك 🚀
-    </button>
-  </section>
-
-  <section class="card" id="driver" hidden>
-    <h2>أهلاً بيك سائقنا العزيز 🚘</h2>
-
-    <label>اسم السائق</label>
-    <input placeholder="اكتب اسمك">
-
-    <label>رقم الهاتف</label>
-    <input type="tel" placeholder="07xxxxxxxxx">
-
-    <label>نوع المركبة</label>
-    <select>
-      <option>سيارة</option>
-      <option>تك تك</option>
-      <option>دراجة توصيل</option>
-    </select>
-
-    <button class="primary" onclick="alert('هذه واجهة تجريبية للسائق')">
-      تسجيل كسائق
-    </button>
-  </section>
-
-  <p class="note">تاكسي العراق 🇮🇶 — واجهة تجريبية</p>
-</div>
-
-<script>
-function showMode(mode, button) {
-  document.getElementById("passenger").hidden =
-    mode !== "passenger";
-
-  document.getElementById("driver").hidden =
-    mode !== "driver";
-
-  document.querySelectorAll(".switch button")
-    .forEach(btn => btn.classList.remove("active"));
-
-  button.classList.add("active");
-}
-
-function chooseService(button) {
-  document.querySelectorAll(".service")
-    .forEach(btn => btn.classList.remove("active"));
-
-  button.classList.add("active");
-}
-
-function bookRide() {
-  const pickup = document.getElementById("pickup").value.trim();
-  const destination = document.getElementById("destination").value.trim();
-
-  if (!pickup || !destination) {
-    alert("عيني، اكتب مكان الانطلاق والوصول أولاً 📍");
-    return;
+            card(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'رحلاتي السابقة',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (history.isEmpty)
+                    const Text('ماكو رحلات لحد الآن'),
+                  ...history.map(
+                    (ride) => ListTile(
+                      leading: const Icon(
+                        Icons.local_taxi,
+                        color: turquoise,
+                      ),
+                      title: Text(ride),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  alert("تم تجهيز طلبك التجريبي! 🚕\nمن: " +
-    pickup + "\nإلى: " + destination +
-    "\n\nهذا نموذج واجهة فقط، مو طلب حقيقي.");
-}
-</script>
+  Widget modeButton(
+    String title,
+    bool active,
+    VoidCallback onPressed,
+  ) {
+    return FilledButton(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        backgroundColor: active ? yellow : Colors.white,
+        foregroundColor: Colors.black87,
+        padding: const EdgeInsets.all(14),
+      ),
+      child: Text(title),
+    );
+  }
 
-</body>
-</html>
-name: iraq_taxi
-description: A complete Iraqi Taxi App.
-version: 1.0.0+1
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-dependencies:
-  flutter:
-    sdk: flutter
-  google_maps_flutter: ^2.5.0
-  geolocator: ^10.1.0
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.15.3
-  cloud_firestore: ^4.13.6
-  http: ^1.1.0
-  provider: ^6.1.1
-  flutter_polyline_points: ^2.0.0
+  Widget serviceButton(String emoji, String title) {
+    return Expanded(
+      child: InkWell(
+        onTap: () => setState(() => service = title),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: service == title
+                ? const Color(0xFFD8FFF5)
+                : const Color(0xFFF4FAFC),
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(
+              color: service == title ? turquoise : Colors.black12,
+            ),
+          ),
+          child: Column(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 27)),
+              const SizedBox(height: 5),
+              Text(title),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget textField(
+    String label,
+    TextEditingController controller,
+    IconData icon,
+  ) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: turquoise),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+    );
+  }
+
+  Widget card(Widget child) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x10173746),
+            blurRadius: 12,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}

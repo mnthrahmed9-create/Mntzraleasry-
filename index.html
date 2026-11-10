@@ -1,0 +1,250 @@
+# =========================================================
+#   KID — stylized standing child  (ALL-IN-ONE SCRIPT)
+#   Blender 3.x / 4.x
+#   Builds → joins → exports STL+FBX → renders PNG
+# =========================================================
+import bpy
+import math
+import os
+
+# ---------- CONFIG ----------
+EXPORT_DIR = "//kid_export"
+DO_STL     = True
+DO_FBX     = True
+DO_RENDER  = True
+RENDER_W   = 1200
+RENDER_H   = 1600
+
+# =========================================================
+# 1) RESET SCENE
+# =========================================================
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+for block in (bpy.data.materials, bpy.data.meshes, bpy.data.lights, bpy.data.cameras):
+    for item in list(block):
+        if item.users == 0:
+            block.remove(item)
+
+# =========================================================
+# 2) COLLECTION
+# =========================================================
+col = bpy.data.collections.new("Kid")
+bpy.context.scene.collection.children.link(col)
+
+def move_to_col(obj):
+    for c in obj.users_collection:
+        c.objects.unlink(obj)
+    col.objects.link(obj)
+
+# =========================================================
+# 3) MATERIALS
+# =========================================================
+def make_mat(name, color, roughness=0.6, metallic=0.0, subsurface=0.0):
+    mat = bpy.data.materials.new(name)
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes.get("Principled BSDF")
+    bsdf.inputs["Base Color"].default_value = (*color, 1)
+    bsdf.inputs["Roughness"].default_value = roughness
+    bsdf.inputs["Metallic"].default_value = metallic
+    if "Subsurface Weight" in bsdf.inputs:          # Blender 4.x
+        bsdf.inputs["Subsurface Weight"].default_value = subsurface
+    elif "Subsurface" in bsdf.inputs:               # Blender 3.x
+        bsdf.inputs["Subsurface"].default_value = subsurface
+    return mat
+
+M_SKIN   = make_mat("M_Skin",   (0.98, 0.78, 0.66), roughness=0.55, subsurface=0.15)
+M_SHIRT  = make_mat("M_Shirt",  (0.20, 0.55, 0.85), roughness=0.7)
+M_PANTS  = make_mat("M_Pants",  (0.18, 0.22, 0.35), roughness=0.75)
+M_SHOES  = make_mat("M_Shoes",  (0.85, 0.25, 0.25), roughness=0.6)
+M_HAIR   = make_mat("M_Hair",   (0.25, 0.15, 0.08), roughness=0.7)
+M_EYE_W  = make_mat("M_EyeW",   (1.0, 1.0, 1.0),    roughness=0.2)
+M_EYE_B  = make_mat("M_EyeB",   (0.05, 0.05, 0.08), roughness=0.2)
+M_MOUTH  = make_mat("M_Mouth",  (0.55, 0.20, 0.20), roughness=0.5)
+
+parts = []
+def finalize(obj, mat, smooth=True, name=None):
+    move_to_col(obj)
+    if mat: obj.data.materials.append(mat)
+    if smooth:
+        for p in obj.data.polygons:
+            p.use_smooth = True
+    if name: obj.name = name
+    parts.append(obj)
+    return obj
+
+def sphere(loc, r, mat, name, segs=24, rings=16, scale=(1,1,1)):
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=r, location=loc,
+                                         segments=segs, ring_count=rings)
+    o = bpy.context.object
+    o.scale = scale
+    bpy.ops.object.transform_apply(scale=True)
+    return finalize(o, mat, name=name)
+
+def cylinder(loc, r, depth, mat, name, verts=24, scale=(1,1,1), rot=(0,0,0)):
+    bpy.ops.mesh.primitive_cylinder_add(radius=r, depth=depth, location=loc,
+                                        vertices=verts)
+    o = bpy.context.object
+    o.rotation_euler = rot
+    o.scale = scale
+    bpy.ops.object.transform_apply(scale=True, rotation=True)
+    return finalize(o, mat, name=name)
+
+# =========================================================
+# 4) BUILD KID (height ~1.10 m, chibi proportions)
+# =========================================================
+
+# --- Feet / Shoes ---
+for s in (-1, 1):
+    x = 0.09 * s
+    sphere((x, -0.02, 0.06), 0.075, M_SHOES, f"Shoe_{s}",
+           scale=(1.0, 1.5, 0.75))
+
+# --- Legs ---
+for s in (-1, 1):
+    x = 0.09 * s
+    cylinder((x, 0, 0.22), 0.055, 0.30, M_PANTS, f"Leg_{s}")
+    sphere((x, 0, 0.37), 0.06, M_PANTS, f"Knee_{s}")   # soft joint
+
+# --- Hips ---
+sphere((0, 0, 0.40), 0.13, M_PANTS, "Hips", scale=(1.0, 0.85, 0.9))
+
+# --- Torso (shirt) ---
+sphere((0, 0, 0.55), 0.15, M_SHIRT, "Torso", scale=(1.0, 0.85, 1.15))
+
+# --- Neck ---
+cylinder((0, 0, 0.70), 0.045, 0.06, M_SKIN, "Neck")
+
+# --- Head ---
+sphere((0, 0, 0.85), 0.17, M_SKIN, "Head", scale=(1.0, 0.95, 1.05))
+
+# --- Ears ---
+for s in (-1, 1):
+    sphere((0.165 * s, 0, 0.85), 0.035, M_SKIN, f"Ear_{s}",
+           scale=(0.6, 1.0, 1.0))
+
+# --- Nose ---
+sphere((0, -0.165, 0.83), 0.022, M_SKIN, "Nose")
+
+# --- Eyes (whites + pupils) ---
+for s in (-1, 1):
+    x = 0.06 * s
+    sphere((x, -0.145, 0.88), 0.032, M_EYE_W, f"EyeWhite_{s}",
+           scale=(1.0, 0.6, 1.1))
+    sphere((x, -0.172, 0.88), 0.017, M_EYE_B, f"Pupil_{s}",
+           scale=(1.0, 0.6, 1.0))
+
+# --- Eyebrows ---
+for s in (-1, 1):
+    sphere((0.06 * s, -0.165, 0.925), 0.015, M_HAIR, f"Brow_{s}",
+           scale=(1.4, 0.4, 0.4))
+
+# --- Mouth (small smile) ---
+sphere((0, -0.170, 0.79), 0.020, M_MOUTH, "Mouth",
+       scale=(1.4, 0.3, 0.6))
+
+# --- Hair cap ---
+sphere((0, 0.02, 0.92), 0.175, M_HAIR, "HairCap", scale=(1.02, 1.0, 0.9))
+# Hair tuft (front)
+sphere((0, -0.12, 1.00), 0.06, M_HAIR, "HairTuft",
+       scale=(1.2, 0.9, 0.8))
+# Hair spikes
+for i, (x, y, z, sx, sy, sz) in enumerate([
+    (-0.10, -0.02, 1.02, 0.6, 0.7, 1.1),
+    ( 0.00,  0.02, 1.05, 0.7, 0.7, 1.2),
+    ( 0.10, -0.02, 1.02, 0.6, 0.7, 1.1),
+]):
+    sphere((x, y, z), 0.05, M_HAIR, f"HairSpike_{i}", scale=(sx, sy, sz))
+
+# --- Arms (standing, slightly out) ---
+for s in (-1, 1):
+    x = 0.17 * s
+    # shoulder
+    sphere((x, 0, 0.63), 0.055, M_SHIRT, f"Shoulder_{s}")
+    # upper arm
+    cylinder((x + 0.02 * s, 0, 0.52), 0.042, 0.16, M_SHIRT, f"UpperArm_{s}",
+             rot=(0, math.radians(10 * s), 0))
+    # elbow
+    sphere((x + 0.035 * s, 0, 0.44), 0.042, M_SKIN, f"Elbow_{s}")
+    # forearm
+    cylinder((x + 0.045 * s, 0, 0.36), 0.038, 0.15, M_SKIN, f"Forearm_{s}",
+             rot=(0, math.radians(5 * s), 0))
+    # hand
+    sphere((x + 0.05 * s, 0, 0.27), 0.045, M_SKIN, f"Hand_{s}",
+           scale=(1.0, 0.8, 1.1))
+
+# =========================================================
+# 5) CAMERA + LIGHTS + WORLD
+# =========================================================
+bpy.ops.object.camera_add(location=(1.2, -1.8, 1.0))
+cam = bpy.context.object
+cam.rotation_euler = (math.radians(75), 0, math.radians(33))
+bpy.context.scene.camera = cam
+
+bpy.ops.object.light_add(type='SUN', location=(2, -2, 3))
+bpy.context.object.data.energy = 3.0
+
+bpy.ops.object.light_add(type='AREA', location=(-1.5, -1.0, 1.6))
+fill = bpy.context.object
+fill.data.energy = 100
+fill.data.size = 2.0
+
+world = bpy.context.scene.world or bpy.data.worlds.new("World")
+bpy.context.scene.world = world
+world.use_nodes = True
+bg = world.node_tree.nodes.get("Background")
+bg.inputs[0].default_value = (0.05, 0.06, 0.08, 1)
+bg.inputs[1].default_value = 0.6
+
+for area in bpy.context.screen.areas:
+    if area.type == 'VIEW_3D':
+        for space in area.spaces:
+            if space.type == 'VIEW_3D':
+                space.shading.type = 'MATERIAL'
+
+# =========================================================
+# 6) EXPORT FOLDER
+# =========================================================
+export_path = bpy.path.abspath(EXPORT_DIR)
+os.makedirs(export_path, exist_ok=True)
+
+# =========================================================
+# 7) JOIN + EXPORT STL
+# =========================================================
+bpy.ops.object.select_all(action='DESELECT')
+for p in parts:
+    p.select_set(True)
+bpy.context.view_layer.objects.active = parts[0]
+bpy.ops.object.join()
+joined = bpy.context.active_object
+joined.name = "Kid_Joined"
+
+if DO_STL:
+    stl_path = os.path.join(export_path, "kid.stl")
+    bpy.ops.export_mesh.stl(filepath=stl_path, use_selection=True)
+    print(f"[Kid] STL exported → {stl_path}")
+
+# =========================================================
+# 8) EXPORT FBX
+# =========================================================
+if DO_FBX:
+    fbx_path = os.path.join(export_path, "kid.fbx")
+    bpy.ops.export_scene.fbx(filepath=fbx_path, use_selection=False)
+    print(f"[Kid] FBX exported → {fbx_path}")
+
+# =========================================================
+# 9) RENDER PNG
+# =========================================================
+if DO_RENDER:
+    scene = bpy.context.scene
+    try:
+        scene.render.engine = 'BLENDER_EEVEE_NEXT'   # Blender 4.2+
+    except Exception:
+        scene.render.engine = 'BLENDER_EEVEE'        # Blender 3.x / 4.0
+    scene.render.resolution_x = RENDER_W
+    scene.render.resolution_y = RENDER_H
+    png_path = os.path.join(export_path, "kid_render.png")
+    scene.render.filepath = png_path
+    bpy.ops.render.render(write_still=True)
+    print(f"[Kid] Render saved → {png_path}")
+
+print("✅ DONE — Kid built, joined, exported and rendered.")

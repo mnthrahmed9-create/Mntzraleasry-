@@ -1,185 +1,253 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Monster Chess 3D — المملكة</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
-
-<!-- ✅ نظام المكافآت -->
+<title>MONSTER CHESS 3D — Royal Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
 <script src="rewards-config.js"></script>
 <script src="rewards.js"></script>
 
 <style>
-    :root{
-        --navy-deep:#0B1A2E;--navy:#132B45;--navy-light:#1E3A5F;
-        --charcoal:#1A1A1E;--charcoal-light:#2A2C33;--charcoal-soft:#34363E;
-        --metal:#5C6470;--metal-light:#8A919C;--metal-soft:#B4BAC4;
-        --champagne:#C9A96A;--champagne-light:#D9C08E;--champagne-dark:#A8894F;
-        --silver:#C4C9D1;--silver-dark:#A8B0BB;
-        --ivory:#F2EAD9;--ivory-dark:#E0D5BD;--ivory-soft:#EDE4D0;
-        --bronze:#9C7A4E;--bronze-dark:#6E5435;
-        --coral:#B97C6E;--coral-dark:#8B5A4E;--white:#FFFFFF;
-        --font-main:'Cairo',sans-serif;
-    }
-    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-    html,body{height:100%;overscroll-behavior:none;}
-    body{
-        font-family:var(--font-main);
-        background:linear-gradient(180deg,var(--navy-deep) 0%,var(--navy) 35%,var(--navy-light) 65%,var(--charcoal-light) 100%);
-        height:100vh;height:100dvh;
-        overflow:hidden;display:flex;flex-direction:column;position:relative;color:var(--ivory);
-        touch-action:manipulation;
-    }
-    .bg-castle{position:absolute;bottom:20%;left:50%;transform:translateX(-50%);font-size:25vw;opacity:.06;filter:blur(2px);z-index:0;pointer-events:none}
-    .menu-top-bar{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:flex-start;padding:15px}
-    .profile-box{display:flex;align-items:center;background:linear-gradient(135deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);border-radius:15px;padding:5px 15px 5px 5px;box-shadow:0 4px 12px rgba(0,0,0,.5);cursor:pointer}
-    .avatar-frame{width:50px;height:50px;border-radius:50%;background:radial-gradient(circle,var(--ivory),var(--ivory-dark));border:1.5px solid var(--silver);display:flex;justify-content:center;align-items:center;font-size:28px;box-shadow:0 0 8px rgba(201,169,106,.35);position:relative}
-    .level-badge{position:absolute;bottom:-5px;right:-5px;background:linear-gradient(180deg,var(--champagne-light),var(--champagne-dark));color:var(--charcoal);font-size:10px;font-weight:900;padding:2px 6px;border-radius:10px;border:1px solid var(--charcoal)}
-    .profile-info{margin-right:10px;display:flex;flex-direction:column;justify-content:center}
-    .profile-name{font-size:14px;font-weight:700;color:var(--ivory);text-shadow:0 1px 2px #000}
-    .profile-stars{font-size:12px;color:var(--champagne);font-weight:800;display:flex;align-items:center;gap:3px}
-    .resources{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-    .res-pill{background:rgba(10,15,25,.85);border:1px solid var(--metal);border-radius:20px;padding:3px 8px 3px 3px;display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--ivory);box-shadow:inset 0 1px 3px rgba(196,201,209,.12)}
-    .res-pill .icon{width:22px;height:22px;border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:14px}
-    .res-pill.coin .icon{background:radial-gradient(circle,var(--champagne-light),var(--champagne-dark))}
-    .res-pill.gem .icon{background:radial-gradient(circle,var(--silver),var(--metal))}
-    .btn-plus{background:linear-gradient(180deg,var(--champagne-light),var(--champagne-dark));color:var(--charcoal);border:1.5px solid var(--ivory);border-radius:50%;width:20px;height:20px;font-weight:900;display:flex;justify-content:center;align-items:center;font-size:12px;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.5)}
-    .settings-btn{background:rgba(10,15,25,.85);border:1.5px solid var(--champagne);border-radius:50%;width:40px;height:40px;display:flex;justify-content:center;align-items:center;font-size:20px;color:var(--champagne);cursor:pointer;transition:transform .15s}
-    .menu-side-panel{position:absolute;top:20%;z-index:10;display:flex;flex-direction:column;gap:15px}
-    .menu-side-panel.left{left:10px}.menu-side-panel.right{right:10px}
-    .side-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);border-radius:15px;width:60px;height:65px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.5);position:relative}
-    .side-btn:active{transform:scale(.95)}
-    .side-btn span{font-size:24px}
-    .side-btn small{font-size:9px;font-weight:700;margin-top:2px;color:var(--ivory)}
-    .badge-red{position:absolute;top:-5px;right:-5px;background:var(--coral);color:var(--ivory);width:18px;height:18px;border-radius:50%;font-size:10px;font-weight:900;display:flex;justify-content:center;align-items:center;border:2px solid var(--charcoal);animation:pulse 2.2s infinite}
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-    .chest-box{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);border-radius:15px;width:80px;padding:8px;display:flex;flex-direction:column;align-items:center;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.5);cursor:pointer}
-    .chest-box span{font-size:35px;margin-bottom:5px;animation:float 3s infinite ease-in-out}
-    .chest-box small{font-size:9px;color:var(--champagne);font-weight:800}
-    .chest-box .timer{font-size:11px;font-weight:900;margin-top:2px;font-family:monospace;color:var(--ivory)}
-    .menu-main-center{position:relative;z-index:10;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 20px;margin-top:-10px}
-    .logo-container{text-align:center;margin-bottom:16px;position:relative;animation:logoFloat 5s ease-in-out infinite}
-    @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-    .logo-crown{font-size:clamp(40px,10vw,60px);position:absolute;top:-30px;left:50%;transform:translateX(-50%);filter:drop-shadow(0 4px 6px rgba(0,0,0,.8)) drop-shadow(0 0 10px rgba(201,169,106,.4))}
-    .logo-text{font-size:clamp(35px,9vw,55px);font-weight:900;color:var(--champagne);text-shadow:0 2px 0 var(--champagne-dark),0 4px 0 var(--bronze-dark),0 6px 12px rgba(0,0,0,.85);letter-spacing:2px;margin:0;font-family:Arial,sans-serif}
-    .logo-ribbon{background:linear-gradient(180deg,var(--bronze),var(--bronze-dark));color:var(--ivory);font-size:12px;font-weight:800;padding:3px 20px;border-radius:10px;display:inline-block;margin-top:-5px;box-shadow:0 3px 8px rgba(0,0,0,.5);border:1px solid var(--charcoal);transform:rotate(-2deg)}
-    .btn-main{width:100%;max-width:350px;height:70px;border-radius:35px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,.55),inset 0 3px 6px rgba(255,255,255,.15);border:2.5px solid var(--champagne-dark);font-family:var(--font-main);color:var(--ivory)}
-    .btn-main:active{transform:translateY(5px)}
-    .btn-main.online{background:linear-gradient(180deg,#24446B,#12263D)}
-    .btn-main.computer{background:linear-gradient(180deg,#6A3F35,#3F241E)}
-    .btn-main.customize{background:linear-gradient(180deg,#3A2E5C,#1E1736)}
-    .btn-main .icon-circle{width:50px;height:50px;background:rgba(10,15,25,.4);border-radius:50%;border:1.5px solid var(--champagne);display:flex;justify-content:center;align-items:center;font-size:24px}
-    .btn-main .text-box{text-align:center;flex:1}
-    .btn-main h3{font-size:22px;font-weight:900;color:var(--ivory);text-shadow:0 2px 4px rgba(0,0,0,.8);margin-bottom:-3px}
-    .btn-main p{font-size:10px;color:var(--silver);font-weight:600}
-    .menu-bottom-bar{position:relative;z-index:10;display:flex;justify-content:center;gap:8px;padding:12px;background:linear-gradient(to top,rgba(10,15,25,.85),transparent)}
-    .bottom-btn{width:56px;height:56px;background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);border-radius:14px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.5)}
-    .bottom-btn:active{transform:translateY(3px)}
-    .bottom-btn span{font-size:22px}
-    .bottom-btn small{font-size:8px;font-weight:800;margin-top:2px;color:var(--ivory)}
-    .modal-overlay{position:fixed;inset:0;background:rgba(5,8,15,.88);z-index:200;display:flex;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:15px}
-    .modal-overlay.active{opacity:1;pointer-events:auto}
-    .modal-content{background:linear-gradient(160deg,var(--charcoal-light),var(--charcoal));border:2px solid var(--champagne-dark);border-radius:20px;width:100%;max-width:460px;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,.85);transform:scale(.9);transition:transform .3s;text-align:right;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-    .modal-overlay.active .modal-content{transform:scale(1)}
-    .modal-content h2{color:var(--champagne);text-align:center;margin-bottom:14px;text-shadow:0 2px 4px #000;font-size:19px}
-    .modal-section-title{color:var(--champagne);font-size:13px;font-weight:800;margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(201,169,106,.25);display:flex;align-items:center;gap:6px}
-    .modal-close{background:linear-gradient(180deg,var(--coral),var(--coral-dark));color:var(--ivory);border:1.5px solid var(--ivory-dark);padding:10px 24px;border-radius:20px;font-family:var(--font-main);font-weight:800;font-size:14px;cursor:pointer;display:block;margin:16px auto 0;box-shadow:0 3px 8px rgba(0,0,0,.5)}
-    .modal-close:active{transform:scale(.95)}
-    .diff-btn{width:100%;height:58px;border-radius:29px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2.5px solid var(--champagne-dark);font-family:var(--font-main);font-size:19px;font-weight:900;color:var(--ivory);text-shadow:0 2px 4px rgba(0,0,0,.8)}
-    .diff-btn:active{transform:translateY(4px)}
-    .diff-btn.easy{background:linear-gradient(to bottom,#2E4A3E,#1A2E27)}
-    .diff-btn.medium{background:linear-gradient(to bottom,#5C4A28,#3A2E19)}
-    .diff-btn.hard{background:linear-gradient(to bottom,#6A3F35,#3F241E)}
-    .setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(196,201,209,.15);font-weight:700;color:var(--ivory);gap:10px}
-    .setting-row:last-of-type{border-bottom:none}
-    .setting-row span{flex:1;min-width:0}
-    input[type=checkbox]{width:24px;height:24px;accent-color:var(--champagne-dark);cursor:pointer;flex-shrink:0}
-    input[type=range]{width:100px;accent-color:var(--champagne-dark);cursor:pointer;flex-shrink:0}
-    .preset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-    .preset-btn{background:rgba(10,15,25,.6);border:1.5px solid var(--metal);border-radius:10px;padding:5px;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all .2s}
-    .preset-btn:hover{border-color:var(--champagne)}
-    .preset-btn.active{border-color:var(--champagne);box-shadow:0 0 12px rgba(201,169,106,.4);background:rgba(201,169,106,.1)}
-    .preset-btn .swatches{display:flex;height:26px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,.5)}
-    .preset-btn .swatches>div{flex:1}
-    .preset-btn .preset-name{font-size:9px;font-weight:700;color:var(--ivory);text-align:center;line-height:1.1}
-    .color-list{display:flex;flex-direction:column;gap:5px}
-    .color-row{display:flex;justify-content:space-between;align-items:center;background:rgba(10,15,25,.5);padding:6px 11px;border-radius:10px;border:1px solid rgba(201,169,106,.18)}
-    .color-row span{font-size:12px;font-weight:700;color:var(--ivory)}
-    .color-row input[type=color]{width:44px;height:32px;border:1.5px solid var(--champagne-dark);border-radius:8px;background:transparent;cursor:pointer;padding:0;-webkit-appearance:none;appearance:none}
-    .color-row input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
-    .color-row input[type=color]::-webkit-color-swatch{border:none;border-radius:5px}
-    .camera-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-    .cam-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--ivory);padding:10px 4px;border-radius:10px;font-family:var(--font-main);font-weight:800;font-size:10px;cursor:pointer}
-    .cam-btn:active{transform:scale(.95)}
-    .cam-btn:hover{border-color:var(--champagne);color:var(--champagne)}
-    .background-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-    .bg-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--ivory);padding:12px 4px;border-radius:10px;font-family:var(--font-main);font-weight:800;font-size:10px;cursor:pointer;transition:all .2s}
-    .bg-btn:active{transform:scale(.95)}
-    .bg-btn:hover{border-color:var(--champagne);color:var(--champagne)}
-    .bg-btn.active{border-color:var(--champagne);box-shadow:0 0 12px rgba(201,169,106,.5);background:rgba(201,169,106,.15);color:var(--champagne)}
-    .reset-btn{width:100%;margin-top:10px;padding:9px;border-radius:10px;background:rgba(185,124,110,.2);border:1.5px solid var(--coral);color:var(--coral);font-family:var(--font-main);font-weight:800;font-size:12px;cursor:pointer}
-    #gameScreen{display:none;position:fixed;inset:0;background:linear-gradient(to bottom,var(--navy-deep) 0%,var(--navy) 55%,var(--charcoal) 100%);flex-direction:column;z-index:50;overflow:hidden}
-    #gameScreen.active{display:flex}
-    .game-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:linear-gradient(180deg,rgba(10,15,25,.85),transparent);border-bottom:1px solid rgba(201,169,106,.25);gap:6px}
-    .back-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--champagne);padding:7px 12px;border-radius:20px;font-family:var(--font-main);font-weight:800;font-size:12px;cursor:pointer}
-    .game-title{color:var(--champagne);font-weight:900;font-size:14px;text-shadow:0 2px 4px #000;white-space:nowrap}
-    .game-level-select{background:rgba(10,15,25,.85);border:1.5px solid var(--champagne-dark);border-radius:20px;color:var(--champagne);padding:6px 8px;font-family:var(--font-main);font-weight:800;font-size:11px;cursor:pointer}
-    .game-settings-btn{width:34px!important;height:34px!important;padding:0!important;border-radius:50%!important;display:flex!important;justify-content:center!important;align-items:center!important;font-size:16px!important;flex-shrink:0}
-    .game-settings-btn:active{transform:scale(.9)}
-    #game{flex:1;width:100%;min-height:0;touch-action:none;overflow:hidden;position:relative}
-    #game canvas{display:block}
-    .game-controls{padding:10px 12px 14px;background:linear-gradient(0deg,rgba(10,15,25,.92),transparent);border-top:1px solid rgba(201,169,106,.25)}
-    #status{color:var(--champagne);font-weight:900;font-size:14px;text-align:center;margin-bottom:8px;text-shadow:0 1px 3px rgba(0,0,0,.8);min-height:20px}
-    .game-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-    .game-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--ivory);padding:9px 14px;border-radius:20px;font-family:var(--font-main);font-weight:800;font-size:12px;cursor:pointer}
-    .game-btn:active{transform:translateY(3px)}
-    .game-btn.gold{background:linear-gradient(180deg,var(--champagne-light),var(--champagne-dark));color:var(--charcoal)}
-    .game-btn.red{background:linear-gradient(180deg,var(--coral),var(--coral-dark));color:var(--ivory)}
-    #moves{max-height:44px;overflow-y:auto;color:var(--silver);font-size:11px;text-align:center;margin-top:8px;padding:5px;background:rgba(10,15,25,.6);border-radius:10px;word-wrap:break-word}
-    #promotion{display:none;padding:10px;background:rgba(10,15,25,.85);border:1.5px solid var(--champagne-dark);border-radius:15px;margin-top:8px;text-align:center}
-    #promotion strong{display:block;margin-bottom:6px;color:var(--champagne);font-size:12px}
-    #promotion .game-actions{gap:5px}
-    .reward-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-    .reward-day{background:rgba(10,15,25,.6);border:1.5px solid var(--metal);border-radius:12px;padding:8px 4px;text-align:center}
-    .reward-day.claimed{opacity:.45}
-    .reward-day.current{border-color:var(--champagne);box-shadow:0 0 12px rgba(201,169,106,.35);transform:scale(1.03)}
-    .reward-day .day-num{font-size:9px;font-weight:800;color:var(--silver);margin-bottom:4px}
-    .reward-day .day-icon{font-size:22px;margin-bottom:4px;display:block}
-    .reward-day .day-val{font-size:10px;font-weight:900;color:var(--champagne)}
-    .claim-btn{background:linear-gradient(180deg,var(--champagne-light),var(--champagne-dark));color:var(--charcoal);border:none;border-radius:10px;padding:4px 8px;font-weight:900;font-size:10px;cursor:pointer;margin-top:4px;width:100%}
-    .claim-btn:disabled{background:var(--charcoal-soft);color:var(--metal);cursor:not-allowed}
-    .chest-anim-container{display:flex;justify-content:center;margin:18px 0}
-    .chest-anim{font-size:76px;animation:chestShake .6s infinite}
-    @keyframes chestShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg) scale(1.03)}50%{transform:rotate(8deg) scale(1.03)}75%{transform:rotate(-8deg) scale(1.03)}}
-    .chest-anim.opened{animation:chestOpen .5s forwards}
-    @keyframes chestOpen{to{transform:scale(2);opacity:0}}
-    .achieve-row,.mission-row{background:rgba(10,15,25,.55);padding:11px;border-radius:12px;margin-bottom:9px;border:1px solid rgba(201,169,106,.18);color:var(--ivory)}
-    .achieve-row b,.mission-row b{font-size:12px;color:var(--ivory)}
-    .achieve-row .prog,.mission-row .reward{color:var(--champagne);font-weight:900;font-size:11px}
-    .progress-bar{width:100%;height:7px;background:rgba(196,201,209,.15);border-radius:5px;margin-top:5px;overflow:hidden}
-    .progress-fill{height:100%;background:linear-gradient(90deg,var(--bronze),var(--champagne));border-radius:5px;transition:width .3s}
-    #toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,rgba(30,35,45,.97),rgba(10,15,25,.97));color:var(--champagne);padding:11px 22px;border-radius:20px;border:1.5px solid var(--champagne-dark);font-weight:800;font-size:13px;opacity:0;pointer-events:none;transition:all .3s;z-index:9999;max-width:90vw;text-align:center}
-    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-    #splash{position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;opacity:1;transition:opacity 1s ease}
-    #splash.hide{opacity:0;pointer-events:none}
-    #splash .splash-vignette{position:absolute;inset:0;background:radial-gradient(circle at center,#1A1A1E 0%,#0B1018 55%,#000 100%)}
-    .company-wrap{position:relative;z-index:2}
-    #splash .company{margin:0;font-size:clamp(48px,15vw,120px);font-weight:900;letter-spacing:16px;background:linear-gradient(180deg,var(--ivory) 0%,var(--champagne-light) 30%,var(--champagne-dark) 50%,var(--champagne-light) 70%,var(--ivory) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;opacity:0;transform:scale(.4);animation:companyIn 1.4s cubic-bezier(.2,.9,.3,1.1) .2s forwards}
-    @keyframes companyIn{60%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
-    #splash .tagline{margin-top:22px;color:var(--silver);font-size:14px;font-weight:700;letter-spacing:14px;opacity:0;animation:tagIn .9s ease 1.4s forwards}
-    @keyframes tagIn{to{opacity:1}}
-    @media (max-width:400px){.btn-main h3{font-size:19px}.game-title{font-size:12px}.preset-grid{gap:5px}.preset-btn .preset-name{font-size:8px}}
-    #bg3d{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#08141f 0%,#050a12 60%,#02040a 100%);}
-    #bg3d canvas{display:block;width:100%!important;height:100%!important;}
-    #bgVignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 118% 74% at 50% 44%,rgba(0,0,0,0) 30%,rgba(2,6,14,.30) 68%,rgba(0,0,0,.72) 100%),linear-gradient(to bottom,rgba(3,6,12,.42) 0%,rgba(0,0,0,0) 20%,rgba(0,0,0,0) 74%,rgba(2,4,9,.72) 100%);}
-    #libLoader{position:fixed;inset:0;z-index:100000;background:#000;display:none;flex-direction:column;justify-content:center;align-items:center;color:#C9A96A;font-family:var(--font-main);font-weight:800;gap:14px}
-    #libLoader.active{display:flex}
-    #libLoader .spinner{width:52px;height:52px;border:4px solid rgba(201,169,106,.2);border-top-color:#C9A96A;border-radius:50%;animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+/* ============================================================
+   الملف الأول — الإعدادات العامة والمشتركة
+   ============================================================ */
+:root{
+    --navy-deep:#0B1A2E;--navy:#132B45;--navy-light:#1E3A5F;
+    --charcoal:#1A1A1E;--charcoal-light:#2A2C33;--charcoal-soft:#34363E;
+    --metal:#5C6470;--metal-light:#8A919C;--metal-soft:#B4BAC4;
+    --champagne:#C9A96A;--champagne-light:#D9C08E;--champagne-dark:#A8894F;
+    --silver:#C4C9D1;--silver-dark:#A8B0BB;
+    --ivory:#F2EAD9;--ivory-dark:#E0D5BD;--ivory-soft:#EDE4D0;
+    --bronze:#9C7A4E;--bronze-dark:#6E5435;
+    --coral:#B97C6E;--coral-dark:#8B5A4E;--white:#FFFFFF;
+    --font-main:'Cairo',sans-serif;
+    /* Royal Edition متغيرات */
+    --gold-royal:#D5AD48;
+    --sky-blue:#36BCEB;
+    --purple-royal:#56317C;
+    --ivory-white:#F5F1E8;
+    --night-black:#080D17;
+    --calm-silver:#AEBBCB;
+    --gold-soft:rgba(213,173,72,0.38);
+    --gold-glow:rgba(213,173,72,0.16);
+    --glass-surface:rgba(9,22,41,0.72);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+html,body{height:100%;overscroll-behavior:none;}
+body{
+    font-family:var(--font-main);
+    background:linear-gradient(180deg,var(--navy-deep) 0%,var(--navy) 35%,var(--navy-light) 65%,var(--charcoal-light) 100%);
+    height:100vh;height:100dvh;
+    overflow:hidden;display:flex;flex-direction:column;position:relative;color:var(--ivory);
+    touch-action:manipulation;
+}
+
+/* ============================================================
+   إخفاء شاشات/عناصر اللعبة الأساسية
+   ============================================================ */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,8,15,.88);z-index:200;display:flex;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity .3s;padding:15px}
+.modal-overlay.active{opacity:1;pointer-events:auto}
+.modal-content{background:linear-gradient(160deg,var(--charcoal-light),var(--charcoal));border:2px solid var(--champagne-dark);border-radius:20px;width:100%;max-width:460px;padding:20px;box-shadow:0 12px 30px rgba(0,0,0,.85);transform:scale(.9);transition:transform .3s;text-align:right;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-overlay.active .modal-content{transform:scale(1)}
+.modal-content h2{color:var(--champagne);text-align:center;margin-bottom:14px;text-shadow:0 2px 4px #000;font-size:19px}
+.modal-section-title{color:var(--champagne);font-size:13px;font-weight:800;margin:14px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(201,169,106,.25);display:flex;align-items:center;gap:6px}
+.modal-close{background:linear-gradient(180deg,var(--coral),var(--coral-dark));color:var(--ivory);border:1.5px solid var(--ivory-dark);padding:10px 24px;border-radius:20px;font-family:var(--font-main);font-weight:800;font-size:14px;cursor:pointer;display:block;margin:16px auto 0;box-shadow:0 3px 8px rgba(0,0,0,.5)}
+.modal-close:active{transform:scale(.95)}
+.diff-btn{width:100%;height:58px;border-radius:29px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2.5px solid var(--champagne-dark);font-family:var(--font-main);font-size:19px;font-weight:900;color:var(--ivory);text-shadow:0 2px 4px rgba(0,0,0,.8)}
+.diff-btn:active{transform:translateY(4px)}
+.diff-btn.easy{background:linear-gradient(to bottom,#2E4A3E,#1A2E27)}
+.diff-btn.medium{background:linear-gradient(to bottom,#5C4A28,#3A2E19)}
+.diff-btn.hard{background:linear-gradient(to bottom,#6A3F35,#3F241E)}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(196,201,209,.15);font-weight:700;color:var(--ivory);gap:10px}
+.setting-row:last-of-type{border-bottom:none}
+.setting-row span{flex:1;min-width:0}
+input[type=checkbox]{width:24px;height:24px;accent-color:var(--champagne-dark);cursor:pointer;flex-shrink:0}
+input[type=range]{width:100px;accent-color:var(--champagne-dark);cursor:pointer;flex-shrink:0}
+.preset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.preset-btn{background:rgba(10,15,25,.6);border:1.5px solid var(--metal);border-radius:10px;padding:5px;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all .2s}
+.preset-btn:hover{border-color:var(--champagne)}
+.preset-btn.active{border-color:var(--champagne);box-shadow:0 0 12px rgba(201,169,106,.4);background:rgba(201,169,106,.1)}
+.preset-btn .swatches{display:flex;height:26px;border-radius:6px;overflow:hidden;border:1px solid rgba(0,0,0,.5)}
+.preset-btn .swatches>div{flex:1}
+.preset-btn .preset-name{font-size:9px;font-weight:700;color:var(--ivory);text-align:center;line-height:1.1}
+.color-list{display:flex;flex-direction:column;gap:5px}
+.color-row{display:flex;justify-content:space-between;align-items:center;background:rgba(10,15,25,.5);padding:6px 11px;border-radius:10px;border:1px solid rgba(201,169,106,.18)}
+.color-row span{font-size:12px;font-weight:700;color:var(--ivory)}
+.color-row input[type=color]{width:44px;height:32px;border:1.5px solid var(--champagne-dark);border-radius:8px;background:transparent;cursor:pointer;padding:0;-webkit-appearance:none;appearance:none}
+.color-row input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
+.color-row input[type=color]::-webkit-color-swatch{border:none;border-radius:5px}
+.camera-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cam-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--ivory);padding:10px 4px;border-radius:10px;font-family:var(--font-main);font-weight:800;font-size:10px;cursor:pointer}
+.cam-btn:active{transform:scale(.95)}
+.cam-btn:hover{border-color:var(--champagne);color:var(--champagne)}
+.background-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.bg-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--ivory);padding:12px 4px;border-radius:10px;font-family:var(--font-main);font-weight:800;font-size:10px;cursor:pointer;transition:all .2s}
+.bg-btn:active{transform:scale(.95)}
+.bg-btn:hover{border-color:var(--champagne);color:var(--champagne)}
+.bg-btn.active{border-color:var(--champagne);box-shadow:0 0 12px rgba(201,169,106,.5);background:rgba(201,169,106,.15);color:var(--champagne)}
+.reset-btn{width:100%;margin-top:10px;padding:9px;border-radius:10px;background:rgba(185,124,110,.2);border:1.5px solid var(--coral);color:var(--coral);font-family:var(--font-main);font-weight:800;font-size:12px;cursor:pointer}
+.reward-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.reward-day{background:rgba(10,15,25,.6);border:1.5px solid var(--metal);border-radius:12px;padding:8px 4px;text-align:center}
+.reward-day.claimed{opacity:.45}
+.reward-day.current{border-color:var(--champagne);box-shadow:0 0 12px rgba(201,169,106,.35);transform:scale(1.03)}
+.reward-day .day-num{font-size:9px;font-weight:800;color:var(--silver);margin-bottom:4px}
+.reward-day .day-icon{font-size:22px;margin-bottom:4px;display:block}
+.reward-day .day-val{font-size:10px;font-weight:900;color:var(--champagne)}
+.claim-btn{background:linear-gradient(180deg,var(--champagne-light),var(--champagne-dark));color:var(--charcoal);border:none;border-radius:10px;padding:4px 8px;font-weight:900;font-size:10px;cursor:pointer;margin-top:4px;width:100%}
+.claim-btn:disabled{background:var(--charcoal-soft);color:var(--metal);cursor:not-allowed}
+.chest-anim-container{display:flex;justify-content:center;margin:18px 0}
+.chest-anim{font-size:76px;animation:chestShake .6s infinite}
+@keyframes chestShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg) scale(1.03)}50%{transform:rotate(8deg) scale(1.03)}75%{transform:rotate(-8deg) scale(1.03)}}
+.chest-anim.opened{animation:chestOpen .5s forwards}
+@keyframes chestOpen{to{transform:scale(2);opacity:0}}
+.achieve-row,.mission-row{background:rgba(10,15,25,.55);padding:11px;border-radius:12px;margin-bottom:9px;border:1px solid rgba(201,169,106,.18);color:var(--ivory)}
+.achieve-row b,.mission-row b{font-size:12px;color:var(--ivory)}
+.achieve-row .prog,.mission-row .reward{color:var(--champagne);font-weight:900;font-size:11px}
+.progress-bar{width:100%;height:7px;background:rgba(196,201,209,.15);border-radius:5px;margin-top:5px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--bronze),var(--champagne));border-radius:5px;transition:width .3s}
+
+/* شاشة اللعب */
+#gameScreen{display:none;position:fixed;inset:0;background:linear-gradient(to bottom,var(--navy-deep) 0%,var(--navy) 55%,var(--charcoal) 100%);flex-direction:column;z-index:50;overflow:hidden}
+#gameScreen.active{display:flex}
+.game-header{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:linear-gradient(180deg,rgba(10,15,25,.85),transparent);border-bottom:1px solid rgba(201,169,106,.25);gap:6px}
+.back-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--champagne);padding:7px 12px;border-radius:20px;font-family:var(--font-main);font-weight:800;font-size:12px;cursor:pointer}
+.game-title{color:var(--champagne);font-weight:900;font-size:14px;text-shadow:0 2px 4px #000;white-space:nowrap}
+.game-level-select{background:rgba(10,15,25,.85);border:1.5px solid var(--champagne-dark);border-radius:20px;color:var(--champagne);padding:6px 8px;font-family:var(--font-main);font-weight:800;font-size:11px;cursor:pointer}
+.game-settings-btn{width:34px!important;height:34px!important;padding:0!important;border-radius:50%!important;display:flex!important;justify-content:center!important;align-items:center!important;font-size:16px!important;flex-shrink:0}
+#game{flex:1;width:100%;min-height:0;touch-action:none;overflow:hidden;position:relative}
+#game canvas{display:block}
+.game-controls{padding:10px 12px 14px;background:linear-gradient(0deg,rgba(10,15,25,.92),transparent);border-top:1px solid rgba(201,169,106,.25)}
+#status{color:var(--champagne);font-weight:900;font-size:14px;text-align:center;margin-bottom:8px;text-shadow:0 1px 3px rgba(0,0,0,.8);min-height:20px}
+.game-actions{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.game-btn{background:linear-gradient(180deg,var(--charcoal-light),var(--charcoal));border:1.5px solid var(--champagne-dark);color:var(--ivory);padding:9px 14px;border-radius:20px;font-family:var(--font-main);font-weight:800;font-size:12px;cursor:pointer}
+.game-btn:active{transform:translateY(3px)}
+.game-btn.gold{background:linear-gradient(180deg,var(--champagne-light),var(--champagne-dark));color:var(--charcoal)}
+.game-btn.red{background:linear-gradient(180deg,var(--coral),var(--coral-dark));color:var(--ivory)}
+#moves{max-height:44px;overflow-y:auto;color:var(--silver);font-size:11px;text-align:center;margin-top:8px;padding:5px;background:rgba(10,15,25,.6);border-radius:10px;word-wrap:break-word}
+#promotion{display:none;padding:10px;background:rgba(10,15,25,.85);border:1.5px solid var(--champagne-dark);border-radius:15px;margin-top:8px;text-align:center}
+#promotion strong{display:block;margin-bottom:6px;color:var(--champagne);font-size:12px}
+
+/* Splash & Loader & Toast */
+#splash{position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;overflow:hidden;opacity:1;transition:opacity 1s ease}
+#splash.hide{opacity:0;pointer-events:none}
+#splash .splash-vignette{position:absolute;inset:0;background:radial-gradient(circle at center,#1A1A1E 0%,#0B1018 55%,#000 100%)}
+.company-wrap{position:relative;z-index:2}
+#splash .company{margin:0;font-size:clamp(48px,15vw,120px);font-weight:900;letter-spacing:16px;background:linear-gradient(180deg,var(--ivory) 0%,var(--champagne-light) 30%,var(--champagne-dark) 50%,var(--champagne-light) 70%,var(--ivory) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;opacity:0;transform:scale(.4);animation:companyIn 1.4s cubic-bezier(.2,.9,.3,1.1) .2s forwards}
+@keyframes companyIn{60%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+#splash .tagline{margin-top:22px;color:var(--silver);font-size:14px;font-weight:700;letter-spacing:14px;opacity:0;animation:tagIn .9s ease 1.4s forwards}
+@keyframes tagIn{to{opacity:1}}
+#libLoader{position:fixed;inset:0;z-index:100000;background:#000;display:none;flex-direction:column;justify-content:center;align-items:center;color:#C9A96A;font-family:var(--font-main);font-weight:800;gap:14px}
+#libLoader.active{display:flex}
+#libLoader .spinner{width:52px;height:52px;border:4px solid rgba(201,169,106,.2);border-top-color:#C9A96A;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,rgba(30,35,45,.97),rgba(10,15,25,.97));color:var(--champagne);padding:11px 22px;border-radius:20px;border:1.5px solid var(--champagne-dark);font-weight:800;font-size:13px;opacity:0;pointer-events:none;transition:all .3s;z-index:9999;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+#bg3d{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#08141f 0%,#050a12 60%,#02040a 100%);}
+#bgVignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 118% 74% at 50% 44%,rgba(0,0,0,0) 30%,rgba(2,6,14,.30) 68%,rgba(0,0,0,.72) 100%)}
+
+/* ============================================================
+   Royal Edition — الواجهة الملكية الجديدة
+   ============================================================ */
+#menuScreen{
+    display:flex;
+    position:relative;
+    width:100%;
+    height:100%;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    z-index:10;
+}
+.royal-menu-container{
+    position:relative;
+    width:100%;
+    max-width:460px;
+    height:100%;
+    background:radial-gradient(circle at 50% 24%, #132847 0%, #091629 55%, #080D17 100%);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:16px 16px 20px;
+    overflow:hidden;
+    box-shadow:0 0 70px rgba(8,13,23,0.95);
+}
+.ambient-glow{position:absolute;top:-8%;left:50%;transform:translateX(-50%);width:145%;height:62%;background:radial-gradient(ellipse at center, rgba(213,173,72,0.14) 0%, rgba(54,188,235,0.06) 45%, transparent 75%);pointer-events:none;z-index:1}
+.particles{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.particle{position:absolute;background:radial-gradient(circle, var(--ivory-white) 0%, var(--gold-royal) 65%, transparent 100%);border-radius:50%;animation:floatUp linear infinite;opacity:0}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(.5);opacity:0}25%{opacity:.65}75%{opacity:.45}100%{transform:translateY(-10vh) scale(1.1);opacity:0}}
+
+.castle-backdrop{position:absolute;top:4.5%;left:50%;transform:translateX(-50%);width:124%;max-width:570px;z-index:2;pointer-events:none;filter:drop-shadow(0 18px 36px rgba(8,13,23,0.9))}
+.marble-floor-stage{position:absolute;bottom:0;left:0;width:100%;height:290px;perspective:340px;z-index:2;overflow:hidden;pointer-events:none}
+.marble-board{width:220%;height:360px;margin-left:-60%;transform:rotateX(66deg);transform-origin:bottom center;background-image:linear-gradient(45deg,var(--night-black) 25%,transparent 25%),linear-gradient(-45deg,var(--night-black) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--night-black) 75%),linear-gradient(-45deg,transparent 75%,var(--night-black) 75%);background-color:var(--ivory-white);background-size:76px 76px;background-position:0 0,0 38px,38px -38px,-38px 0;box-shadow:inset 0 65px 85px var(--night-black);position:relative;opacity:.88}
+.marble-board::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,13,23,.96) 0%,rgba(213,173,72,.08) 48%,rgba(245,241,232,.14) 100%)}
+.floor-vignette{position:absolute;bottom:0;left:0;width:100%;height:300px;background:linear-gradient(to bottom,var(--navy-deep) 0%,rgba(9,22,41,.25) 42%,rgba(8,13,23,.92) 100%);z-index:3;pointer-events:none}
+
+.royal-top-bar{position:relative;z-index:15;display:flex;align-items:center;justify-content:space-between;gap:6px;direction:ltr}
+.glass-btn-round{width:44px;height:44px;border-radius:50%;background:var(--glass-surface);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid var(--gold-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 18px rgba(8,13,23,.55),inset 0 1px 1px rgba(245,241,232,.12);transition:all .22s cubic-bezier(.2,.8,.2,1);flex-shrink:0}
+.glass-btn-round:hover{border-color:var(--gold-royal);transform:translateY(-1.5px)}
+.glass-btn-round:active{transform:scale(.93)}
+.currency-pill{display:flex;align-items:center;background:var(--glass-surface);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid var(--gold-soft);border-radius:24px;padding:4px 10px 4px 5px;gap:6px;box-shadow:0 6px 18px rgba(8,13,23,.5),inset 0 1px 1px rgba(245,241,232,.1);cursor:pointer;transition:all .2s ease}
+.currency-pill:hover{border-color:var(--gold-royal)}
+.plus-badge{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#e6c66e 0%,var(--gold-royal) 100%);color:var(--night-black);font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(8,13,23,.45)}
+.currency-val{font-size:14px;font-weight:800;color:var(--ivory-white);min-width:24px;text-align:center;text-shadow:0 1px 3px rgba(8,13,23,.85)}
+.profile-card{display:flex;align-items:center;background:linear-gradient(135deg,rgba(16,33,58,.85) 0%,rgba(8,13,23,.92) 100%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid var(--gold-soft);border-radius:16px;padding:5px 10px 5px 12px;gap:10px;box-shadow:0 8px 22px rgba(8,13,23,.6),inset 0 1px 1px rgba(245,241,232,.14);direction:rtl}
+.profile-info{display:flex;flex-direction:column;align-items:flex-end}
+.player-name{font-size:13px;font-weight:800;color:var(--gold-royal);white-space:nowrap}
+.player-rank{display:flex;align-items:center;gap:4px;margin-top:2px}
+.avatar-wrapper{position:relative;width:42px;height:42px}
+.avatar-circle{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--ivory-white) 0%,#dcd4c4 100%);border:2px solid var(--gold-royal);display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 0 12px var(--gold-glow)}
+.royal-level-badge{position:absolute;bottom:-3px;left:-4px;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#e6c66e 0%,var(--gold-royal) 100%);border:1.5px solid var(--night-black);color:var(--night-black);font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(8,13,23,.7)}
+
+.royal-center-stage{position:relative;z-index:15;display:flex;flex-direction:column;align-items:center;width:100%;margin-top:10px;flex:1;justify-content:center;gap:18px}
+.brand-emblem{display:flex;flex-direction:column;align-items:center;position:relative}
+.royal-crown-top{width:52px;height:28px;margin-bottom:-5px;filter:drop-shadow(0 4px 10px rgba(213,173,72,.45));animation:crownFloat 3.5s ease-in-out infinite}
+@keyframes crownFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3.5px)}}
+.brand-title{font-family:'Cinzel','Cairo',serif;font-size:45px;font-weight:900;letter-spacing:4px;background:linear-gradient(180deg,var(--ivory-white) 0%,#ebd083 45%,var(--gold-royal) 85%,#8f6d24 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 6px 14px rgba(8,13,23,.95));direction:ltr;line-height:1.05}
+.brand-badge{margin-top:6px;padding:4px 26px;border-radius:20px;background:linear-gradient(90deg,rgba(8,13,23,.88) 0%,rgba(28,36,48,.94) 50%,rgba(8,13,23,.88) 100%);border:1px solid var(--gold-soft);box-shadow:0 4px 15px rgba(8,13,23,.75),inset 0 0 10px var(--gold-glow);font-size:12.5px;font-weight:800;letter-spacing:2.5px;color:var(--ivory-white);direction:ltr}
+
+.action-stack{width:100%;display:flex;flex-direction:column;gap:12px;padding:0 4px}
+.luxury-btn{position:relative;width:100%;height:72px;border-radius:24px;border:1.5px solid var(--gold-soft);display:flex;align-items:center;justify-content:space-between;padding:0 14px;cursor:pointer;overflow:hidden;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 12px 28px rgba(8,13,23,.7),inset 0 1px 1px rgba(245,241,232,.16);transition:all .24s cubic-bezier(.2,.8,.2,1);font-family:var(--font-main)}
+.luxury-btn::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(245,241,232,.1),transparent);transform:skewX(-25deg);transition:left .65s ease}
+.luxury-btn:hover::before{left:140%}
+.luxury-btn:hover{border-color:var(--gold-royal);transform:translateY(-2px);box-shadow:0 15px 32px rgba(8,13,23,.8),0 0 16px var(--gold-glow)}
+.luxury-btn:active{transform:scale(.975)}
+.btn-online{background:linear-gradient(135deg,rgba(18,42,74,.88) 0%,rgba(9,22,41,.94) 100%)}
+.btn-computer{background:linear-gradient(135deg,rgba(112,69,31,.9) 0%,rgba(56,34,15,.95) 100%);border-color:rgba(213,173,72,.6)}
+.btn-customize{background:linear-gradient(135deg,rgba(86,49,124,.88) 0%,rgba(38,20,58,.94) 100%)}
+.orb-icon{width:46px;height:46px;border-radius:14px;background:rgba(8,13,23,.62);border:1px solid rgba(213,173,72,.35);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 6px rgba(8,13,23,.65);flex-shrink:0}
+.btn-content{display:flex;flex-direction:column;align-items:center;text-align:center;flex:1}
+.btn-heading{font-size:19px;font-weight:800;color:var(--ivory-white);text-shadow:0 2px 8px rgba(8,13,23,.75);line-height:1.2}
+.btn-sub{font-size:11px;font-weight:600;color:var(--calm-silver);margin-top:2px}
+
+/* صف المكافآت المدمج */
+.rewards-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;padding:0 4px}
+.reward-btn{position:relative;background:rgba(9,22,41,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(213,173,72,.3);border-radius:14px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:all .2s;font-family:var(--font-main)}
+.reward-btn:hover{border-color:var(--gold-royal);transform:translateY(-2px);background:rgba(213,173,72,.12)}
+.reward-btn:active{transform:scale(.94)}
+.reward-icon{font-size:20px;margin-bottom:2px}
+.reward-label{font-size:9.5px;font-weight:700;color:var(--ivory-white)}
+.reward-badge{position:absolute;top:-4px;right:-4px;background:#B97C6E;color:white;width:16px;height:16px;border-radius:50%;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--night-black);animation:pulse 2.2s infinite;z-index:2}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+.royal-bottom-dock{position:relative;z-index:15;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:8px;border-radius:22px;background:rgba(8,13,23,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1.5px solid var(--gold-soft);box-shadow:0 12px 30px rgba(8,13,23,.85),inset 0 1px 1px rgba(245,241,232,.1);direction:rtl}
+.dock-item{position:relative;border-radius:14px;padding:7px 2px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s ease}
+.dock-item:hover{background:rgba(213,173,72,.12);transform:translateY(-2px)}
+.dock-item:active{transform:scale(.93)}
+.dock-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;margin-bottom:3px;filter:drop-shadow(0 2px 4px rgba(8,13,23,.7))}
+.dock-label{font-size:10px;font-weight:700;color:var(--ivory-white)}
+.shop-badge{position:absolute;top:2px;right:8px;background:linear-gradient(135deg,var(--bronze),#4a2c12);color:var(--ivory-white);font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;border:1px solid var(--gold-royal);box-shadow:0 2px 5px rgba(8,13,23,.6)}
+
+@media (max-width:400px){
+    .brand-title{font-size:38px;letter-spacing:3px}
+    .luxury-btn{height:66px}
+    .btn-heading{font-size:17px}
+    .btn-sub{font-size:10px}
+    .orb-icon{width:42px;height:42px}
+    .royal-crown-top{width:44px;height:24px}
+}
 </style>
 </head>
 <body>
@@ -198,64 +266,312 @@
     <div>جاري تحميل المكتبات...</div>
 </div>
 
-<div id="menuScreen" style="display:flex;flex-direction:column;height:100%;position:relative;">
-    <header class="menu-top-bar">
-        <div class="profile-box" onclick="showToast('الملف الشخصي')">
-            <div class="avatar-frame">🦁<div class="level-badge" id="ui-level">1</div></div>
-            <div class="profile-info">
-                <div class="profile-name">منتظر احمد</div>
-                <div class="profile-stars">⭐ <span id="ui-trophies">0</span></div>
+<!-- ═══════════════════════════════════════════════════════
+     القائمة الرئيسية — Royal Edition
+     ═══════════════════════════════════════════════════════ -->
+<div id="menuScreen" style="display:flex;">
+    <div class="royal-menu-container">
+        <div class="ambient-glow"></div>
+        <div class="particles" id="particles"></div>
+
+        <!-- Castle Backdrop -->
+        <svg class="castle-backdrop" viewBox="0 0 500 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="towerLit" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#354861"/>
+                    <stop offset="52%" stop-color="#192942"/>
+                    <stop offset="100%" stop-color="#091629"/>
+                </linearGradient>
+                <linearGradient id="towerShadow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1d2f4a"/>
+                    <stop offset="100%" stop-color="#080D17"/>
+                </linearGradient>
+                <linearGradient id="spireRoof" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#AEBBCB"/>
+                    <stop offset="45%" stop-color="#2c415e"/>
+                    <stop offset="100%" stop-color="#091629"/>
+                </linearGradient>
+                <linearGradient id="goldTrim" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#F5F1E8"/>
+                    <stop offset="50%" stop-color="#D5AD48"/>
+                    <stop offset="100%" stop-color="#70451F"/>
+                </linearGradient>
+                <radialGradient id="windowGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#F5F1E8"/>
+                    <stop offset="55%" stop-color="#D5AD48"/>
+                    <stop offset="100%" stop-color="#70451F" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+
+            <ellipse cx="250" cy="312" rx="230" ry="42" fill="#132642" opacity="0.4"/>
+
+            <g>
+                <rect x="38" y="190" width="44" height="145" fill="url(#towerLit)"/>
+                <rect x="33" y="178" width="54" height="14" rx="2" fill="#273a54"/>
+                <rect x="33" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="48" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="63" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="77" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="56" y="210" width="8" height="18" rx="4" fill="#080D17"/>
+            </g>
+            <g>
+                <rect x="418" y="190" width="44" height="145" fill="url(#towerLit)"/>
+                <rect x="413" y="178" width="54" height="14" rx="2" fill="#273a54"/>
+                <rect x="413" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="428" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="443" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="457" y="169" width="10" height="9" fill="#354861"/>
+                <rect x="436" y="210" width="8" height="18" rx="4" fill="#080D17"/>
+            </g>
+            <g>
+                <rect x="98" y="135" width="52" height="195" fill="url(#towerLit)"/>
+                <polygon points="92,135 124,62 156,135" fill="url(#spireRoof)"/>
+                <line x1="124" y1="44" x2="124" y2="62" stroke="url(#goldTrim)" stroke-width="2.5"/>
+                <circle cx="124" cy="43" r="3" fill="#F5F1E8"/>
+                <rect x="94" y="133" width="60" height="8" fill="#091629"/>
+                <path d="M118 165 C118 156, 130 156, 130 165 L130 184 L118 184 Z" fill="url(#windowGlow)"/>
+                <path d="M120 166 C120 159, 128 159, 128 166 L128 182 L120 182 Z" fill="#F5F1E8"/>
+            </g>
+            <g>
+                <rect x="350" y="135" width="52" height="195" fill="url(#towerLit)"/>
+                <polygon points="344,135 376,62 408,135" fill="url(#spireRoof)"/>
+                <line x1="376" y1="44" x2="376" y2="62" stroke="url(#goldTrim)" stroke-width="2.5"/>
+                <circle cx="376" cy="43" r="3" fill="#F5F1E8"/>
+                <rect x="346" y="133" width="60" height="8" fill="#091629"/>
+                <path d="M370 165 C370 156, 382 156, 382 165 L382 184 L370 184 Z" fill="url(#windowGlow)"/>
+                <path d="M372 166 C372 159, 380 159, 380 166 L380 182 L372 182 Z" fill="#F5F1E8"/>
+            </g>
+            <g>
+                <rect x="160" y="105" width="44" height="220" fill="url(#towerShadow)"/>
+                <polygon points="155,105 182,42 209,105" fill="url(#spireRoof)"/>
+                <line x1="182" y1="28" x2="182" y2="42" stroke="url(#goldTrim)" stroke-width="2"/>
+            </g>
+            <g>
+                <rect x="296" y="105" width="44" height="220" fill="url(#towerShadow)"/>
+                <polygon points="291,105 318,42 345,105" fill="url(#spireRoof)"/>
+                <line x1="318" y1="28" x2="318" y2="42" stroke="url(#goldTrim)" stroke-width="2"/>
+            </g>
+            <g>
+                <rect x="212" y="75" width="76" height="265" fill="url(#towerLit)"/>
+                <rect x="210" y="74" width="80" height="5.5" fill="url(#goldTrim)"/>
+                <polygon points="206,74 250,12 294,74" fill="url(#spireRoof)"/>
+                <line x1="250" y1="0" x2="250" y2="14" stroke="url(#goldTrim)" stroke-width="3"/>
+                <line x1="245" y1="5" x2="255" y2="5" stroke="url(#goldTrim)" stroke-width="2.5"/>
+                <path d="M241 112 C241 100, 259 100, 259 112 L259 136 L241 136 Z" fill="url(#windowGlow)"/>
+                <path d="M244 114 C244 104, 256 104, 256 114 L256 134 L244 134 Z" fill="#F5F1E8"/>
+            </g>
+            <rect x="80" y="230" width="340" height="110" fill="url(#towerShadow)"/>
+            <rect x="82" y="222" width="336" height="8" fill="#25364f"/>
+            <path d="M214 340 L214 272 C214 244, 286 244, 286 272 L286 340 Z" fill="#080D17" stroke="url(#goldTrim)" stroke-width="2.5"/>
+            <path d="M222 340 L222 276 C222 254, 278 254, 278 276 L278 340 Z" fill="url(#windowGlow)" opacity="0.28"/>
+        </svg>
+
+        <div class="marble-floor-stage"><div class="marble-board"></div></div>
+        <div class="floor-vignette"></div>
+
+        <!-- شريط علوي -->
+        <header class="royal-top-bar">
+            <button class="glass-btn-round" onclick="openModal('settings')" aria-label="الإعدادات">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#AEBBCB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3" stroke="#D5AD48"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+
+            <div class="currency-pill" onclick="openModal('store')">
+                <span class="plus-badge">+</span>
+                <span class="currency-val" id="ui-gems">0</span>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <polygon points="12,2 22,9 18,21 6,21 2,9" fill="#36BCEB"/>
+                    <polygon points="12,2 18,9 12,21 6,9" fill="#9cdff7"/>
+                    <polygon points="12,2 22,9 18,9" fill="#238db5"/>
+                </svg>
             </div>
-        </div>
-        <div class="resources">
-            <div class="res-pill coin"><div class="icon">🪙</div><span id="ui-coins">0</span><div class="btn-plus" onclick="openModal('store')">+</div></div>
-            <div class="res-pill gem"><div class="icon">💎</div><span id="ui-gems">0</span><div class="btn-plus" onclick="openModal('store')">+</div></div>
-            <div class="settings-btn" onclick="openModal('settings')">⚙️</div>
-        </div>
-    </header>
 
-    <div class="menu-side-panel left">
-        <div class="side-btn" onclick="openModal('daily-rewards')"><span>🎁</span><small>مكافآت</small><div class="badge-red" id="daily-badge">!</div></div>
-        <div class="side-btn" onclick="openModal('achievements')"><span>🏆</span><small>إنجازات</small></div>
-        <div class="side-btn" onclick="openModal('missions')"><span>📅</span><small>مهام</small></div>
+            <div class="currency-pill" onclick="openModal('store')">
+                <span class="plus-badge">+</span>
+                <span class="currency-val" id="ui-coins">0</span>
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="#D5AD48" stroke="#F5F1E8" stroke-width="1.5"/>
+                    <circle cx="12" cy="12" r="6" fill="none" stroke="#F5F1E8" stroke-width="1"/>
+                </svg>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-info">
+                    <span class="player-name">منتظر احمد</span>
+                    <div class="player-rank">
+                        <span style="color:#AEBBCB;font-size:10px;">⭐</span>
+                        <span id="ui-trophies" style="color:#D5AD48;font-size:11px;font-weight:800;">0</span>
+                    </div>
+                </div>
+                <div class="avatar-wrapper">
+                    <div class="avatar-circle">🦁</div>
+                    <div class="royal-level-badge" id="ui-level">1</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- الوسط -->
+        <main class="royal-center-stage">
+            <div class="brand-emblem">
+                <svg class="royal-crown-top" viewBox="0 0 64 36" fill="none">
+                    <path d="M6 30L2 8L18 19L32 4L46 19L62 8L58 30H6Z" fill="url(#goldTrim)" stroke="#F5F1E8" stroke-width="1.4" stroke-linejoin="round"/>
+                    <circle cx="32" cy="21" r="2.8" fill="#F5F1E8"/>
+                    <circle cx="18" cy="24" r="2" fill="#36BCEB"/>
+                    <circle cx="46" cy="24" r="2" fill="#36BCEB"/>
+                </svg>
+                <h1 class="brand-title">MONSTER</h1>
+                <div class="brand-badge">CHESS 3D</div>
+            </div>
+
+            <div class="action-stack">
+                <button class="luxury-btn btn-online" onclick="showToast('🌐 الأونلاين قيد التجهيز الملكي!')">
+                    <div class="orb-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#36BCEB" stroke-width="1.8">
+                            <circle cx="12" cy="12" r="9"/>
+                            <ellipse cx="12" cy="12" rx="4" ry="9"/>
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                        </svg>
+                    </div>
+                    <div class="btn-content">
+                        <span class="btn-heading">أونلاين قريبًا</span>
+                        <span class="btn-sub">غير متاح في هذه النسخة</span>
+                    </div>
+                    <div class="orb-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#36BCEB">
+                            <circle cx="9" cy="8" r="3"/>
+                            <circle cx="16" cy="9" r="2.5"/>
+                            <path d="M4 18c0-3 2.5-5 5-5s5 2 5 5H4z"/>
+                            <path d="M14 18c0-2.2 1.8-4 4-4s3 1.8 3 4h-7z"/>
+                        </svg>
+                    </div>
+                </button>
+
+                <button class="luxury-btn btn-computer" onclick="openModal('difficulty')">
+                    <div class="orb-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D5AD48" stroke-width="1.8">
+                            <rect x="3" y="4" width="18" height="12" rx="2"/>
+                            <line x1="8" y1="20" x2="16" y2="20"/>
+                            <line x1="12" y1="16" x2="12" y2="20"/>
+                        </svg>
+                    </div>
+                    <div class="btn-content">
+                        <span class="btn-heading">ضد الكمبيوتر</span>
+                        <span class="btn-sub">العب مع الذكاء الاصطناعي</span>
+                    </div>
+                    <div class="orb-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#D5AD48">
+                            <rect x="5" y="7" width="14" height="11" rx="2.5"/>
+                            <circle cx="9.5" cy="11.5" r="1.5" fill="#080D17"/>
+                            <circle cx="14.5" cy="11.5" r="1.5" fill="#080D17"/>
+                            <line x1="12" y1="3" x2="12" y2="7" stroke="#D5AD48" stroke-width="2"/>
+                            <circle cx="12" cy="3" r="1.8" fill="#F5F1E8"/>
+                        </svg>
+                    </div>
+                </button>
+
+                <button class="luxury-btn btn-customize" onclick="startPreview()">
+                    <div class="orb-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#D5AD48">
+                            <path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/>
+                            <circle cx="7.5" cy="11.5" r="1.5" fill="#56317C"/>
+                            <circle cx="10.5" cy="7.5" r="1.5" fill="#36BCEB"/>
+                            <circle cx="15.5" cy="8.5" r="1.5" fill="#F5F1E8"/>
+                        </svg>
+                    </div>
+                    <div class="btn-content">
+                        <span class="btn-heading">تخصيص الرقعة</span>
+                        <span class="btn-sub">ألوان، خامات، وزوايا كاميرا</span>
+                    </div>
+                    <div class="orb-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#F5F1E8">
+                            <path d="M12 2L14.2 8.8L21 11L14.2 13.2L12 20L9.8 13.2L3 11L9.8 8.8L12 2Z"/>
+                            <path d="M19 16L19.8 18.2L22 19L19.8 19.8L19 22L18.2 19.8L16 19L18.2 18.2L19 16Z" fill="#D5AD48"/>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+
+            <!-- صف المكافآت -->
+            <div class="rewards-row">
+                <button class="reward-btn" onclick="openModal('daily-rewards')">
+                    <div class="reward-badge" id="daily-badge">!</div>
+                    <span class="reward-icon">🎁</span>
+                    <span class="reward-label">مكافآت</span>
+                </button>
+                <button class="reward-btn" onclick="openModal('achievements')">
+                    <span class="reward-icon">🏆</span>
+                    <span class="reward-label">إنجازات</span>
+                </button>
+                <button class="reward-btn" onclick="openModal('missions')">
+                    <span class="reward-icon">📅</span>
+                    <span class="reward-label">مهام</span>
+                </button>
+                <button class="reward-btn" onclick="openModal('chest')">
+                    <span class="reward-icon">🧰</span>
+                    <span class="reward-label">صندوق</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- الشريط السفلي -->
+        <nav class="royal-bottom-dock">
+            <div class="dock-item" onclick="openModal('store')">
+                <div class="dock-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path d="M4 10h16v10H4z" fill="#F5F1E8"/>
+                        <path d="M2 6l2-3h16l2 3v4H2V6z" fill="#36BCEB"/>
+                        <rect x="9" y="13" width="6" height="7" fill="#091629"/>
+                    </svg>
+                </div>
+                <span class="dock-label">المتجر</span>
+            </div>
+            <div class="dock-item" onclick="showToast('🏆 لوحة الصدارة')">
+                <div class="dock-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#D5AD48">
+                        <path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/>
+                        <path d="M4 5h3v3a3 3 0 0 1-3-3zm16 0h-3v3a3 3 0 0 0 3-3z" fill="none" stroke="#D5AD48" stroke-width="2"/>
+                        <rect x="10" y="15" width="4" height="3"/>
+                        <rect x="7" y="18" width="10" height="2" rx="1"/>
+                    </svg>
+                </div>
+                <span class="dock-label">الترتيب</span>
+            </div>
+            <div class="dock-item" onclick="showToast('🥇 قاعة الشرف')">
+                <div class="dock-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <polygon points="8,2 16,2 14,10 10,10" fill="#56317C"/>
+                        <circle cx="12" cy="15" r="6" fill="#D5AD48"/>
+                        <polygon points="12,11.5 13,14 15.5,14 13.5,15.5 14.2,18 12,16.5 9.8,18 10.5,15.5 8.5,14 11,14" fill="#F5F1E8"/>
+                    </svg>
+                </div>
+                <span class="dock-label">الشرف</span>
+            </div>
+            <div class="dock-item" onclick="openModal('customization')">
+                <div class="dock-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#D5AD48">
+                        <path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/>
+                        <circle cx="8" cy="11" r="1.5" fill="#56317C"/>
+                        <circle cx="11" cy="7.5" r="1.5" fill="#36BCEB"/>
+                    </svg>
+                </div>
+                <span class="dock-label">الرقعة</span>
+            </div>
+            <div class="dock-item" onclick="showToast('🔗 تم نسخ رابط الدعوة!')">
+                <div class="dock-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#AEBBCB" stroke-width="2.2" stroke-linecap="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                </div>
+                <span class="dock-label">مشاركة</span>
+            </div>
+        </nav>
     </div>
-
-    <div class="menu-side-panel right">
-        <div class="chest-box" onclick="openModal('chest')"><span>🧰</span><small>صندوق الأبطال</small><div class="timer" id="chest-timer">جاهز!</div></div>
-    </div>
-
-    <main class="menu-main-center">
-        <div class="logo-container">
-            <div class="logo-crown">👑</div>
-            <h1 class="logo-text">MONSTER</h1>
-            <div class="logo-ribbon">CHESS 3D</div>
-        </div>
-        <button class="btn-main online" onclick="showToast('🌐 جاري الاتصال بالخادم...')">
-            <div class="icon-circle">🌐</div>
-            <div class="text-box"><h3>اللعب أونلاين</h3><p>واجه لاعبين من جميع أنحاء العالم</p></div>
-            <div class="icon-circle" style="font-size:18px;">👥</div>
-        </button>
-        <button class="btn-main computer" onclick="openModal('difficulty')">
-            <div class="icon-circle">🖥️</div>
-            <div class="text-box"><h3>ضد الكمبيوتر</h3><p>العب مع الذكاء الاصطناعي</p></div>
-            <div class="icon-circle">🤖</div>
-        </button>
-        <button class="btn-main customize" onclick="startPreview()">
-            <div class="icon-circle">🎨</div>
-            <div class="text-box"><h3>تخصيص الرقعة</h3><p>ألوان، خامات، وزوايا كاميرا</p></div>
-            <div class="icon-circle">✨</div>
-        </button>
-    </main>
-
-    <footer class="menu-bottom-bar">
-        <div class="bottom-btn" onclick="openModal('store')"><span>🏪</span><small>المتجر</small></div>
-        <div class="bottom-btn" onclick="showToast('🏆 الترتيب')"><span>🏆</span><small>الترتيب</small></div>
-        <div class="bottom-btn" onclick="showToast('🥇 لوحة الشرف')"><span>🥇</span><small>الشرف</small></div>
-        <div class="bottom-btn" onclick="openModal('customization')"><span>🎨</span><small>الرقعة</small></div>
-        <div class="bottom-btn" onclick="showToast('🔗 مشاركة')"><span>🔗</span><small>مشاركة</small></div>
-    </footer>
 </div>
 
+<!-- شاشة اللعب -->
 <div id="gameScreen">
     <div class="game-header">
         <button class="back-btn" onclick="backMenu()">← رجوع</button>
@@ -291,6 +607,9 @@
     </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════
+     المودالات
+     ═══════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="modal-difficulty">
     <div class="modal-content">
         <h2>⚔️ اختر الصعوبة</h2>
@@ -379,14 +698,10 @@
         : './';
     if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
         CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
-            this.beginPath();
-            this.moveTo(x+r,y);
-            this.arcTo(x+w,y,x+w,y+h,r);
-            this.arcTo(x+w,y+h,x,y+h,r);
-            this.arcTo(x,y+h,x,y,r);
-            this.arcTo(x,y,x+w,y,r);
-            this.closePath();
-            return this;
+            this.beginPath(); this.moveTo(x+r,y);
+            this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r);
+            this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r);
+            this.closePath(); return this;
         };
     }
     window.__IMPORTMAP_SUPPORTED__ = (typeof HTMLScriptElement.supports === 'function') &&
@@ -444,18 +759,33 @@
         }
     })();
 })();
+
+// جزيئات Royal
+(function(){
+    const pc = document.getElementById('particles');
+    if(!pc) return;
+    for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 3.5 + 1.5;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (Math.random() * 7 + 6) + 's';
+        p.style.animationDelay = (Math.random() * 5) + 's';
+        pc.appendChild(p);
+    }
+})();
 </script>
 
 <!-- ============ الكود الرئيسي ============ -->
 <script type="module" id="mainModule">
-// ============ استيراد المكتبات (تم إصلاح OrbitControls هنا) ============
 let THREE, Chess, OrbitControls;
 let EffectComposer, RenderPass, UnrealBloomPass, OutputPass;
 
 try {
     THREE = await import('three');
     ({ Chess } = await import('chess'));
-    // ✅ استيراد OrbitControls صراحةً
     ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
     ({ EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js'));
     ({ RenderPass }     = await import('three/addons/postprocessing/RenderPass.js'));
@@ -464,20 +794,18 @@ try {
 } catch(err) {
     console.warn('[module] فشل التحميل، محاولة UMD:', err);
     if (window.THREE && window.Chess && window.THREE.OrbitControls) {
-        THREE = window.THREE;
-        Chess = window.Chess;
-        OrbitControls = window.THREE.OrbitControls;
+        THREE = window.THREE; Chess = window.Chess; OrbitControls = window.THREE.OrbitControls;
         EffectComposer = null; RenderPass = null; UnrealBloomPass = null; OutputPass = null;
     } else {
         await new Promise(res => window.addEventListener('libsReady', res, { once: true }));
-        THREE = window.THREE;
-        Chess = window.Chess;
-        OrbitControls = window.THREE.OrbitControls;
+        THREE = window.THREE; Chess = window.Chess; OrbitControls = window.THREE.OrbitControls;
         EffectComposer = null; RenderPass = null; UnrealBloomPass = null; OutputPass = null;
     }
 }
 
-// ============ الإعدادات الافتراضية ============
+const raycaster = new THREE.Raycaster();
+
+// ============ الإعدادات ============
 const DEFAULT_SETTINGS = { sound: true, music: true, soundVolume: 0.70, musicVolume: 0.30 };
 const DEFAULT_CUSTOM = {
     lightSquare:'#C9A96A', darkSquare:'#0F0F14',
@@ -485,31 +813,23 @@ const DEFAULT_CUSTOM = {
     base:'#0A0A0F', lightColor:'#FFF0D0',
     boardBg:'forest'
 };
-
 let currentCustom = { ...DEFAULT_CUSTOM };
 let playerData = {
     customization:{ ...DEFAULT_CUSTOM },
     settings: { ...DEFAULT_SETTINGS }
 };
-
 const BOARD_SCALE = 1;
 
 // =========================================================
-// [MonsterBoard — الرقعة الاحترافية الثلاثية الأبعاد]
+// MonsterBoard
 // =========================================================
 class MonsterBoard {
     constructor(options = {}) {
         this.config = this._mergeConfig(options);
         this.group = new THREE.Group();
         this.group.name = 'MonsterBoard';
-        this.squares = [];
-        this.lights = [];
-        this.torches = [];
-        this.crystals = [];
-        this.animated = [];
-        this.elapsed = 0;
-        this._geo = {};
-        this._mat = {};
+        this.squares = []; this.lights = []; this.torches = []; this.crystals = []; this.animated = [];
+        this.elapsed = 0; this._geo = {}; this._mat = {};
         this._build();
     }
     _mergeConfig(o) {
@@ -521,8 +841,7 @@ class MonsterBoard {
             includeLights: true, ambientIntensity: 0.85, hemiIntensity: 0.65,
             sunIntensity: 2.8, sunColor: 0xFFF0D0, sunPosition: [8, 15, 6],
             shadowMapSize: 2048, toneMappingExposure: 1.15,
-            decor: { pillars:true, gargoyles:true, dragons:true, skulls:true,
-                     crystals:true, torches:true, runes:true }
+            decor: { pillars:true, gargoyles:true, dragons:true, skulls:true, crystals:true, torches:true, runes:true }
         };
         const cfg = { ...D, ...o };
         cfg.decor = { ...D.decor, ...(o.decor || {}) };
@@ -530,9 +849,7 @@ class MonsterBoard {
     }
     _build() {
         const C = this.config, S = C.size;
-        this._buildBase(S);
-        this._buildTiles(S);
-        this._buildFrame(S);
+        this._buildBase(S); this._buildTiles(S); this._buildFrame(S);
         if (C.includeLights) this._buildLights();
         if (C.decor.pillars)  this._buildPillars(S);
         if (C.decor.gargoyles) this._buildGargoyles(S);
@@ -571,9 +888,7 @@ class MonsterBoard {
             color: C.lightSquareColor, roughness: 0.45, metalness: 0.35,
             emissive: C.lightSquareColor, emissiveIntensity: 0.05
         });
-        const darkMat = new THREE.MeshStandardMaterial({
-            color: C.darkSquareColor, roughness: 0.65, metalness: 0.25
-        });
+        const darkMat = new THREE.MeshStandardMaterial({ color: C.darkSquareColor, roughness: 0.65, metalness: 0.25 });
         const files = 'abcdefgh';
         for (let r = 0; r < 8; r++) {
             for (let f = 0; f < 8; f++) {
@@ -582,19 +897,12 @@ class MonsterBoard {
                 mesh.position.set((f - 3.5) * S, tileH / 2 + 0.09, (r - 3.5) * S);
                 mesh.receiveShadow = true;
                 mesh.userData.squareName = files[f] + (8 - r);
-                mesh.userData.file = f;
-                mesh.userData.rank = r;
-                mesh.userData.isDark = isDark;
+                mesh.userData.file = f; mesh.userData.rank = r; mesh.userData.isDark = isDark;
                 this.group.add(mesh);
-                this.squares.push({
-                    mesh, squareName: mesh.userData.squareName,
-                    file: f, rank: r, isDark
-                });
+                this.squares.push({ mesh, squareName: mesh.userData.squareName, file: f, rank: r, isDark });
             }
         }
-        this._geo.tile = geo;
-        this._mat.lightTile = lightMat;
-        this._mat.darkTile = darkMat;
+        this._geo.tile = geo; this._mat.lightTile = lightMat; this._mat.darkTile = darkMat;
     }
     _buildFrame(S) {
         const C = this.config;
@@ -604,8 +912,7 @@ class MonsterBoard {
             color: C.accentColor, roughness: 0.28, metalness: 0.92,
             emissive: C.accentColor, emissiveIntensity: 0.1
         });
-        this._mat.rail = railMat;
-        this._mat.accent = accentMat;
+        this._mat.rail = railMat; this._mat.accent = accentMat;
         const rails = [
             { w: half * 2 + thick * 2, d: thick, x: 0, z: -half - thick / 2 },
             { w: half * 2 + thick * 2, d: thick, x: 0, z:  half + thick / 2 },
@@ -648,8 +955,7 @@ class MonsterBoard {
         const hemi = new THREE.HemisphereLight(0x8899CC, 0x080810, C.hemiIntensity);
         hemi.position.set(0, 20, 0); this.group.add(hemi); this.lights.push(hemi);
         const sun = new THREE.DirectionalLight(C.sunColor, C.sunIntensity);
-        sun.position.set(...C.sunPosition);
-        sun.castShadow = true;
+        sun.position.set(...C.sunPosition); sun.castShadow = true;
         sun.shadow.mapSize.set(C.shadowMapSize, C.shadowMapSize);
         sun.shadow.camera.left = -12; sun.shadow.camera.right = 12;
         sun.shadow.camera.top = 12; sun.shadow.camera.bottom = -12;
@@ -665,13 +971,9 @@ class MonsterBoard {
         const C = this.config;
         const off = 4 * S + C.frameThickness + 0.35;
         const stoneMat = new THREE.MeshStandardMaterial({ color: 0x2A2C33, roughness: 0.9, metalness: 0.12 });
-        const goldMat = new THREE.MeshStandardMaterial({
-            color: C.accentColor, roughness: 0.3, metalness: 0.9,
-            emissive: C.accentColor, emissiveIntensity: 0.15
-        });
+        const goldMat = new THREE.MeshStandardMaterial({ color: C.accentColor, roughness: 0.3, metalness: 0.9, emissive: C.accentColor, emissiveIntensity: 0.15 });
         [[-off,-off],[off,-off],[-off,off],[off,off]].forEach(([x,z]) => {
-            const g = new THREE.Group();
-            g.position.set(x, 0, z);
+            const g = new THREE.Group(); g.position.set(x, 0, z);
             const base = new THREE.Mesh(new THREE.BoxGeometry(0.7,0.28,0.7), stoneMat);
             base.position.y = 0.14; base.castShadow = true; base.receiveShadow = true; g.add(base);
             const baseTrim = new THREE.Mesh(new THREE.BoxGeometry(0.78,0.06,0.78), goldMat);
@@ -686,8 +988,7 @@ class MonsterBoard {
             capTrim.position.y = 2.42; capTrim.castShadow = true; g.add(capTrim);
             const orb = new THREE.Mesh(new THREE.SphereGeometry(0.17,14,10), goldMat);
             orb.position.y = 2.62; orb.castShadow = true; g.add(orb);
-            const glow = new THREE.PointLight(C.accentColor, 0.5, 3, 2);
-            glow.position.y = 2.62; g.add(glow);
+            const glow = new THREE.PointLight(C.accentColor, 0.5, 3, 2); glow.position.y = 2.62; g.add(glow);
             this.group.add(g);
         });
     }
@@ -699,8 +1000,7 @@ class MonsterBoard {
         const eyeMat = new THREE.MeshStandardMaterial({ color: 0xFF4422, emissive: 0xFF4422, emissiveIntensity: 2.2, roughness: 0.3 });
         const wingMat = new THREE.MeshStandardMaterial({ color: 0x252830, roughness: 0.92, side: THREE.DoubleSide });
         [{x:-off,z:off,fy:0.25},{x:off,z:off,fy:-0.25}].forEach(p => {
-            const g = new THREE.Group();
-            g.position.set(p.x, 0, p.z); g.rotation.y = p.fy;
+            const g = new THREE.Group(); g.position.set(p.x, 0, p.z); g.rotation.y = p.fy;
             const ped = new THREE.Mesh(new THREE.BoxGeometry(0.95,0.5,0.95), stoneMat);
             ped.position.y = 0.25; ped.castShadow = true; ped.receiveShadow = true; g.add(ped);
             const body = new THREE.Mesh(new THREE.SphereGeometry(0.38,16,12), stoneMat);
@@ -735,8 +1035,7 @@ class MonsterBoard {
         const eyeMat = new THREE.MeshStandardMaterial({ color: 0xFFAA00, emissive: 0xFFAA00, emissiveIntensity: 2.6 });
         const wingMat = new THREE.MeshStandardMaterial({ color: 0x1A1C20, roughness: 0.9, side: THREE.DoubleSide });
         [{x:-off,z:-off,fy:-0.35},{x:off,z:-off,fy:0.35}].forEach(p => {
-            const g = new THREE.Group();
-            g.position.set(p.x, 0, p.z); g.rotation.y = p.fy; g.scale.setScalar(1.25);
+            const g = new THREE.Group(); g.position.set(p.x, 0, p.z); g.rotation.y = p.fy; g.scale.setScalar(1.25);
             const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.72,0.45,10), stoneMat);
             ped.position.y = 0.225; ped.castShadow = true; ped.receiveShadow = true; g.add(ped);
             const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.34,0.6,8,14), stoneMat);
@@ -774,8 +1073,7 @@ class MonsterBoard {
         const stonePedMat = new THREE.MeshStandardMaterial({ color: 0x2A2C33, roughness: 0.9 });
         const glowMat = new THREE.MeshBasicMaterial({ color: 0xFF2200, transparent: true, opacity: 0.8 });
         [[0,-off],[0,off],[-off,0],[off,0]].forEach(([x,z]) => {
-            const g = new THREE.Group();
-            g.position.set(x,0,z);
+            const g = new THREE.Group(); g.position.set(x,0,z);
             const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.44,0.26,8), stonePedMat);
             ped.position.y = 0.13; ped.castShadow = true; ped.receiveShadow = true; g.add(ped);
             const dome = new THREE.Mesh(new THREE.SphereGeometry(0.24,16,12), boneMat);
@@ -808,8 +1106,7 @@ class MonsterBoard {
         });
         [[-off,-off*0.55],[off,-off*0.55],[-off,off*0.55],[off,off*0.55],
          [0,-off],[0,off],[-off,0],[off,0]].forEach(([x,z]) => {
-            const g = new THREE.Group();
-            g.position.set(x,0,z);
+            const g = new THREE.Group(); g.position.set(x,0,z);
             const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(0.32,0), rockMat);
             rock.position.y = 0.1; rock.scale.set(1,0.55,1); rock.castShadow = true; rock.receiveShadow = true; g.add(rock);
             const count = 3 + Math.floor(Math.random()*3);
@@ -837,8 +1134,7 @@ class MonsterBoard {
         const flameMat = new THREE.MeshBasicMaterial({ color: 0xFFAA33, transparent: true, opacity: 0.85, fog: false });
         const coreMat = new THREE.MeshBasicMaterial({ color: 0xFFFF88, transparent: true, opacity: 1.0, fog: false });
         [[-off,0],[off,0],[0,-off],[0,off]].forEach(([x,z]) => {
-            const g = new THREE.Group();
-            g.position.set(x,0,z);
+            const g = new THREE.Group(); g.position.set(x,0,z);
             const base = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.22,0.1,10), metalMat);
             base.position.y = 0.05; base.castShadow = true; g.add(base);
             const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.055,1.4,8), woodMat);
@@ -864,11 +1160,8 @@ class MonsterBoard {
         ctx.clearRect(0,0,1024,1024);
         const cx = 512, cy = 512, r = 460;
         ctx.strokeStyle = hexColor; ctx.fillStyle = hexColor;
-        ctx.shadowBlur = 28; ctx.shadowColor = hexColor;
-        ctx.lineWidth = 3;
-        [r, r-42, r-240].forEach(rr => {
-            ctx.beginPath(); ctx.arc(cx,cy,rr,0,Math.PI*2); ctx.stroke();
-        });
+        ctx.shadowBlur = 28; ctx.shadowColor = hexColor; ctx.lineWidth = 3;
+        [r, r-42, r-240].forEach(rr => { ctx.beginPath(); ctx.arc(cx,cy,rr,0,Math.PI*2); ctx.stroke(); });
         const runes = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ';
         const count = 24;
         ctx.font = 'bold 42px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -889,8 +1182,7 @@ class MonsterBoard {
         ctx.stroke();
         ctx.beginPath(); ctx.arc(cx,cy,40,0,Math.PI*2); ctx.stroke();
         const texture = new THREE.CanvasTexture(canvas);
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.anisotropy = 4;
+        texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 4;
         const mat = new THREE.MeshBasicMaterial({
             map: texture, transparent: true, opacity: 0.75,
             blending: THREE.AdditiveBlending, depthWrite: false,
@@ -924,56 +1216,38 @@ class MonsterBoard {
             }
         }
     }
-    getSquareMesh(name){ const s = this.squares.find(x => x.squareName === name); return s ? s.mesh : null; }
     dispose() {
         const gs = new Set(), ms = new Set();
         this.group.traverse(obj => {
             if (obj.geometry && !gs.has(obj.geometry)){ obj.geometry.dispose(); gs.add(obj.geometry); }
             const mats = Array.isArray(obj.material) ? obj.material : (obj.material ? [obj.material] : []);
-            mats.forEach(m => {
-                if (ms.has(m)) return;
-                if (m.map) m.map.dispose();
-                m.dispose(); ms.add(m);
-            });
+            mats.forEach(m => { if (ms.has(m)) return; if (m.map) m.map.dispose(); m.dispose(); ms.add(m); });
         });
         if (this.group.parent) this.group.parent.remove(this.group);
     }
 }
 
-// =========================================================
-// متغيرات المشهد الرئيسي
-// =========================================================
+// متغيرات المشهد
 let scene, camera, renderer, controls, board, pieces, floorMesh;
-let board3D = null;
-let squares = [];
-let holder = null;
+let board3D = null, squares = [], holder = null;
 let sun, hemi, fill;
-let cameraTween = null;
-let boardBgGroup = null;
-let _lastAppliedBg = null;
-
+let cameraTween = null, boardBgGroup = null, _lastAppliedBg = null;
 const files = "abcdefgh";
 
 function position(sq){
-    return {
-        x: (files.indexOf(sq[0]) - 3.5) * BOARD_SCALE,
-        z: (4.5 - Number(sq[1])) * BOARD_SCALE
-    };
+    return { x: (files.indexOf(sq[0]) - 3.5) * BOARD_SCALE, z: (4.5 - Number(sq[1])) * BOARD_SCALE };
 }
 
-// ============ القطع (لم تمس) ============
 function chessPiece(type, color){
     const g = new THREE.Group();
     const isWhite = color === 'w';
     const mat = new THREE.MeshStandardMaterial({ color: isWhite?0xF2EAD9:0x22242A, roughness:.5, metalness:.18 });
     const darkMat = new THREE.MeshStandardMaterial({ color: isWhite?0xE0D5BD:0x141519, roughness:.6, metalness:.15 });
     const accentMat = new THREE.MeshStandardMaterial({ color: isWhite?0xC9A96A:0x9C7A4E, roughness:.35, metalness:.7 });
-
     const base1 = new THREE.Mesh(new THREE.CylinderGeometry(.32,.36,.1,24), mat);
     base1.position.y = .05; base1.castShadow = true; base1.receiveShadow = true; g.add(base1);
     const base2 = new THREE.Mesh(new THREE.CylinderGeometry(.26,.32,.06,24), darkMat);
     base2.position.y = .13; base2.castShadow = true; g.add(base2);
-
     if(type==='p'){
         const b = new THREE.Mesh(new THREE.CylinderGeometry(.1,.22,.4,20), mat); b.position.y=.36; b.castShadow=true; g.add(b);
         const c = new THREE.Mesh(new THREE.TorusGeometry(.14,.03,8,20), accentMat); c.position.y=.56; c.rotation.x=Math.PI/2; c.castShadow=true; g.add(c);
@@ -1009,11 +1283,7 @@ function disposePiecesGroup(){
         if(obj.geometry && !seenGeos.has(obj.geometry)){ obj.geometry.dispose(); seenGeos.add(obj.geometry); }
         if(obj.material){
             const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-            mats.forEach(m => {
-                if(seenMats.has(m)) return;
-                if(m.map) m.map.dispose();
-                m.dispose(); seenMats.add(m);
-            });
+            mats.forEach(m => { if(seenMats.has(m)) return; if(m.map) m.map.dispose(); m.dispose(); seenMats.add(m); });
         }
     });
     pieces.clear();
@@ -1031,15 +1301,13 @@ function drawBoard(){
             const pos = position(sq);
             const obj = chessPiece(p.type, p.color);
             obj.position.set(pos.x, pieceY, pos.z);
-            obj.userData.square = sq;
-            obj.userData.color = p.color;
+            obj.userData.square = sq; obj.userData.color = p.color;
             pieces.add(obj);
         }
     }
     pieces.updateMatrixWorld(true);
 }
 
-// ============ الألوان ============
 function resetColors(){
     squares.forEach(s => {
         s.material.color.set(s.userData.isDark ? currentCustom.darkSquare : currentCustom.lightSquare);
@@ -1075,18 +1343,13 @@ function hexToInt(hex){
 function applyCustomization(cfg){
     currentCustom = { ...currentCustom, ...cfg };
     if(!squares.length) return;
-
-    squares.forEach(s => {
-        s.material.color.set(s.userData.isDark ? currentCustom.darkSquare : currentCustom.lightSquare);
-    });
-
+    squares.forEach(s => { s.material.color.set(s.userData.isDark ? currentCustom.darkSquare : currentCustom.lightSquare); });
     if (board3D && board3D._mat) {
         if (board3D._mat.rail)     board3D._mat.rail.color.set(currentCustom.frame);
         if (board3D._mat.accent)   board3D._mat.accent.color.set(currentCustom.accent);
         if (board3D._mat.base)     board3D._mat.base.color.set(currentCustom.base);
         if (board3D._mat.baseTrim) board3D._mat.baseTrim.color.set(currentCustom.accent);
     }
-
     if(cfg.boardBg) applyBoardBackground(cfg.boardBg);
 }
 
@@ -1106,8 +1369,7 @@ function setCamera(preset){
         endPos: new THREE.Vector3(...p.pos),
         startTarget: controls.target.clone(),
         endTarget: new THREE.Vector3(...p.target),
-        startTime: performance.now(),
-        duration: 800
+        startTime: performance.now(), duration: 800
     };
 }
 
@@ -1134,9 +1396,7 @@ function animateGame(){
     if(renderer && scene && camera) renderer.render(scene, camera);
 }
 
-// ============================================================
-// الخلفيات
-// ============================================================
+// خلفيات
 const BOARD_BACKGROUNDS = {
     castle: { name:'🏰 قلعة', bg:0x080a15, fog:0x101828, fogNear:22, fogFar:62, sky:['#0a1428','#1a2840'] },
     forest: { name:'🌲 غابة نهارية', bg:0x87CEEB, fog:0xA8E6CF, fogNear:25, fogFar:75, sky:['#4A90E2','#B0E0E6'] },
@@ -1238,9 +1498,7 @@ function clearBoardBg(){
         if(obj.geometry && !dg.has(obj.geometry)){ obj.geometry.dispose(); dg.add(obj.geometry); }
         if(obj.material){
             const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-            mats.forEach(m => {
-                if(!dm.has(m)){ if(m.map) m.map.dispose(); m.dispose(); dm.add(m); }
-            });
+            mats.forEach(m => { if(!dm.has(m)){ if(m.map) m.map.dispose(); m.dispose(); dm.add(m); } });
         }
     });
     boardBgGroup = null;
@@ -1253,7 +1511,6 @@ function applyBoardBackground(type){
     scene.background = new THREE.Color(cfg.bg);
     scene.fog = new THREE.Fog(cfg.fog, cfg.fogNear, cfg.fogFar);
     if(floorMesh) floorMesh.visible = (type !== 'giant' && type !== 'forest');
-
     if (type === 'forest') {
         if (sun)  { sun.intensity = 3.0; sun.color.setHex(0xFFFDE7); }
         if (hemi) { hemi.intensity = 1.5; hemi.color.setHex(0xFFFFFF); }
@@ -1261,7 +1518,6 @@ function applyBoardBackground(type){
         if (sun)  { sun.intensity = 2.4; sun.color.setHex(0xFFF0D0); }
         if (hemi) { hemi.intensity = 1.35; hemi.color.setHex(0xD9C08E); }
     }
-
     boardBgGroup = new THREE.Group();
     const skyTex = makeSkyDomeTexture(cfg.sky[0], cfg.sky[1]);
     const sky = new THREE.Mesh(
@@ -1269,29 +1525,21 @@ function applyBoardBackground(type){
         new THREE.MeshBasicMaterial({ map:skyTex, side:THREE.BackSide, depthWrite:false, fog:false })
     );
     sky.position.y = 5; boardBgGroup.add(sky);
-
     if(type==='castle') boardBgGroup.add(buildCastleBg());
     else if(type==='forest') boardBgGroup.add(buildForestBg());
     else if(type==='giant') boardBgGroup.add(buildGiantBg());
-
     scene.add(boardBgGroup);
     _lastAppliedBg = type;
 }
 
-// =========================================================
-// 🎯 التهيئة الرئيسية
-// =========================================================
 async function initGame3D(){
     if(gameInitialized) return;
     holder = document.getElementById("game");
-
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87CEEB);
     scene.fog = new THREE.Fog(0xA8E6CF, 25, 75);
-
     camera = new THREE.PerspectiveCamera(45, 1, .1, 200);
     camera.position.set(10, 12, 14);
-
     renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false, powerPreference:'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
     renderer.shadowMap.enabled = true;
@@ -1300,75 +1548,46 @@ async function initGame3D(){
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     holder.appendChild(renderer.domElement);
-
     controls = new OrbitControls(camera, renderer.domElement);
     controls.target.set(0, 0.5, 0);
-    controls.enableDamping = true;
-    controls.enablePan = false;
-    controls.minDistance = 8;
-    controls.maxDistance = 26;
+    controls.enableDamping = true; controls.enablePan = false;
+    controls.minDistance = 8; controls.maxDistance = 26;
     controls.maxPolarAngle = Math.PI / 2.15;
-
-    hemi = new THREE.HemisphereLight(0xFFFFFF, 0x87CEEB, 1.5);
-    scene.add(hemi);
-
+    hemi = new THREE.HemisphereLight(0xFFFFFF, 0x87CEEB, 1.5); scene.add(hemi);
     sun = new THREE.DirectionalLight(0xFFFDE7, 3.0);
-    sun.position.set(8, 15, 6);
-    sun.castShadow = true;
+    sun.position.set(8, 15, 6); sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     sun.shadow.camera.left = -12; sun.shadow.camera.right = 12;
     sun.shadow.camera.top = 12; sun.shadow.camera.bottom = -12;
     sun.shadow.camera.near = 1; sun.shadow.camera.far = 40;
     sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
     scene.add(sun);
-
     fill = new THREE.DirectionalLight(0xA8B0BB, 0.8);
-    fill.position.set(-8, 9, -8);
-    scene.add(fill);
-
+    fill.position.set(-8, 9, -8); scene.add(fill);
     floorMesh = new THREE.Mesh(
         new THREE.PlaneGeometry(200,200),
         new THREE.MeshStandardMaterial({ color:0x0A0B10, roughness:.95 })
     );
-    floorMesh.rotation.x = -Math.PI/2;
-    floorMesh.position.y = -0.85;
-    floorMesh.receiveShadow = true;
-    scene.add(floorMesh);
-
+    floorMesh.rotation.x = -Math.PI/2; floorMesh.position.y = -0.85;
+    floorMesh.receiveShadow = true; scene.add(floorMesh);
     board3D = new MonsterBoard({
-        size: BOARD_SCALE,
-        includeLights: false,
+        size: BOARD_SCALE, includeLights: false,
         lightSquareColor: hexToInt(currentCustom.lightSquare),
         darkSquareColor: hexToInt(currentCustom.darkSquare),
         frameColor: hexToInt(currentCustom.frame),
         accentColor: hexToInt(currentCustom.accent),
         baseColor: hexToInt(currentCustom.base),
-        runeColor: 0x66CCFF,
-        crystalColor: 0x88AAFF,
-        torchColor: 0xFF8844,
-        decor: {
-            pillars: true,
-            gargoyles: true,
-            dragons: true,
-            skulls: true,
-            crystals: true,
-            torches: true,
-            runes: true
-        }
+        runeColor: 0x66CCFF, crystalColor: 0x88AAFF, torchColor: 0xFF8844,
+        decor: { pillars: true, gargoyles: true, dragons: true, skulls: true, crystals: true, torches: true, runes: true }
     });
-    board = board3D.group;
-    scene.add(board);
-
+    board = board3D.group; scene.add(board);
     squares = board3D.squares.map(s => {
         s.mesh.material = s.mesh.material.clone();
         s.mesh.userData.square = s.squareName;
         s.mesh.userData.isDark = s.isDark;
         return s.mesh;
     });
-
-    pieces = new THREE.Group();
-    scene.add(pieces);
-
+    pieces = new THREE.Group(); scene.add(pieces);
     applyCustomization(currentCustom);
     gameInitialized = true;
     animateGame();
@@ -1376,9 +1595,7 @@ async function initGame3D(){
     onResize();
 }
 
-// =========================================================
-// الصوت
-// =========================================================
+// ============ الصوت ============
 function midiToFreq(midi){ return 440 * Math.pow(2, (midi - 69) / 12); }
 const MUSIC_CHORDS = [[48,60,64,67,71],[45,57,60,64,67],[41,53,57,60,64],[43,55,59,62,65]];
 const MUSIC_PATTERN = [[0, 2], [], [1], [], [3], [], [2], []];
@@ -1588,23 +1805,16 @@ function attachSettingsListeners() {
     });
 }
 
-// =========================================================
 // متغيرات اللعبة
-// =========================================================
-let gameStarted = false;
-let gameInitialized = false;
-let gameOverHandled = false;
+let gameStarted = false, gameInitialized = false, gameOverHandled = false;
 const chess = new Chess();
 let selected = null, thinking = false, pendingPromotion = null;
 let snapshots = [], playerCaptures = 0;
 
-// =========================================================
-// ربط نظام المكافآت
-// =========================================================
+// ربط المكافآت
 function getRS() {
     return (typeof window.RewardsSystem !== 'undefined' && window.RewardsSystem) ? window.RewardsSystem : null;
 }
-
 window.addEventListener('rewards:balanceChanged', (e) => {
     const b = e.detail;
     const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = (v || 0).toLocaleString(); };
@@ -1623,11 +1833,10 @@ window.addEventListener('rewards:stateChanged', () => {
         if (typeof window.renderChestUI === 'function') window.renderChestUI();
     } catch (e) {}
 });
-window.addEventListener('rewards:levelUp', (e) => { if (e.detail && e.detail.level) showToast(`🎊 ترقية! وصلت إلى المستوى ${e.detail.level}`); });
-window.addEventListener('rewards:achievementCompleted', (e) => { if (e.detail && e.detail.def) showToast(`🏆 إنجاز مكتمل: ${e.detail.def.name}`); });
-window.addEventListener('rewards:missionCompleted', (e) => { if (e.detail && e.detail.def) showToast(`📅 مهمة مكتملة: ${e.detail.def.name}`); });
+window.addEventListener('rewards:levelUp', (e) => { if (e.detail && e.detail.level) showToast(`🎊 ترقية! المستوى ${e.detail.level}`); });
+window.addEventListener('rewards:achievementCompleted', (e) => { if (e.detail && e.detail.def) showToast(`🏆 ${e.detail.def.name}`); });
+window.addEventListener('rewards:missionCompleted', (e) => { if (e.detail && e.detail.def) showToast(`📅 ${e.detail.def.name}`); });
 
-// ---------- واجهات المكافآت ----------
 window.renderDailyRewardsUI = function(){
     const rs = getRS(); if (!rs) return;
     const grid = document.getElementById('rewardGrid'); if (!grid) return;
@@ -1644,10 +1853,8 @@ window.renderDailyRewardsUI = function(){
         b.addEventListener('click', () => {
             const i = parseInt(b.dataset.claim, 10);
             const res = rs.claimDaily(i);
-            if (res.ok) {
-                renderDailyRewardsUI();
-                if (res.reward) { const icons = { coins: '🪙', gems: '💎' }; showToast(`🎉 تم استلام: ${res.reward.amount} ${icons[res.reward.type] || ''}`); }
-            } else showToast('❌ ' + (res.error || 'فشل'));
+            if (res.ok) { renderDailyRewardsUI(); if (res.reward) { const icons = { coins: '🪙', gems: '💎' }; showToast(`🎉 +${res.reward.amount} ${icons[res.reward.type] || ''}`); } }
+            else showToast('❌ ' + (res.error || 'فشل'));
         });
     });
     const badge = document.getElementById('daily-badge');
@@ -1690,18 +1897,19 @@ window.renderMissionsUI = function(){
 
 window.renderChestUI = function(){
     const rs = getRS(); if (!rs) return;
-    const timerEl = document.getElementById('chest-timer');
     const btn = document.getElementById('openChestBtn');
-    if (!timerEl || !btn) return;
+    if (!btn) return;
     const status = rs.getChestStatus('hero'); if (!status) return;
     if (status.ready) {
-        timerEl.textContent = 'جاهز!'; btn.disabled = false;
-        btn.textContent = `افتح الصندوق (🪙 ${status.cost.coins || 0})`; btn.style.opacity = '1';
+        btn.disabled = false;
+        btn.textContent = `افتح الصندوق (🪙 ${status.cost.coins || 0})`;
+        btn.style.opacity = '1';
     } else {
         const sec = Math.floor(status.remainingMs / 1000);
         const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
-        timerEl.textContent = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        btn.disabled = true; btn.textContent = 'الرجاء الانتظار...'; btn.style.opacity = '.5';
+        btn.disabled = true;
+        btn.textContent = `الرجاء الانتظار ${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        btn.style.opacity = '.5';
     }
 };
 
@@ -1719,9 +1927,6 @@ window.openChestAction = function(){
     }, 600);
 };
 
-// =========================================================
-// دوال مساعدة
-// =========================================================
 function loadPlayerData(){
     const saved = window.SafeStorage.getItem('monsterChessData');
     if(saved){
@@ -1733,10 +1938,7 @@ function loadPlayerData(){
     }
     currentCustom = { ...DEFAULT_CUSTOM, ...playerData.customization };
     _lastAppliedBg = currentCustom.boardBg || 'forest';
-    renderPresets();
-    renderColorPickers();
-    renderCameraButtons();
-    renderBackgroundButtons();
+    renderPresets(); renderColorPickers(); renderCameraButtons(); renderBackgroundButtons();
     syncSettingsUI();
     if(gameInitialized) applyCustomization(currentCustom);
     AudioEngine.updateVolumes();
@@ -1775,9 +1977,7 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
     o.addEventListener('click', e => { if(e.target === o) o.classList.remove('active'); });
 });
 
-// =========================================================
-// الألوان / التخصيص
-// =========================================================
+// Presets & Colors
 const PRESETS = [
     { id:'marbleGold',      name:'رخامي + ذهبي',       cfg:{ lightSquare:'#EDE5D5', darkSquare:'#1A1A1E', frame:'#0B0B0E', accent:'#D4AF37', base:'#08080A', lightColor:'#FFE4B0' } },
     { id:'ivoryCharcoal',   name:'عاجي + فحمي',         cfg:{ lightSquare:'#F2EAD9', darkSquare:'#1A1A1E', frame:'#2A2C33', accent:'#8A919C', base:'#141519', lightColor:'#F5F5FA' } },
@@ -1786,20 +1986,14 @@ const PRESETS = [
     { id:'woodCream',       name:'خشبي + كريمي',        cfg:{ lightSquare:'#F0E4CC', darkSquare:'#4A2E1A', frame:'#2E1A0E', accent:'#B8853E', base:'#1A0E06', lightColor:'#FFE4C0' } },
     { id:'grayMarbleSilver',name:'رخام رمادي + فضي',    cfg:{ lightSquare:'#E5E7EA', darkSquare:'#5A5F66', frame:'#2E3136', accent:'#C4C9D1', base:'#1A1C20', lightColor:'#E8F0FF' } }
 ];
-
 const COLOR_LABELS = {
     lightSquare:'⬜ المربعات الفاتحة', darkSquare:'⬛ المربعات الداكنة',
     frame:'🖼️ الإطار الخارجي', accent:'✨ الحواف والزخارف',
     base:'🏛️ القاعدة السفلية', lightColor:'💡 لون الإضاءة'
 };
-
 const CAMERA_PRESETS = {
-    top:     { label:'علوي 90°' },
-    front:   { label:'أمامي' },
-    side:    { label:'جانبي' },
-    angle45: { label:'45°' },
-    iso:     { label:'Isometric' },
-    closeup: { label:'تقريب' }
+    top: { label:'علوي 90°' }, front: { label:'أمامي' }, side: { label:'جانبي' },
+    angle45: { label:'45°' }, iso: { label:'Isometric' }, closeup: { label:'تقريب' }
 };
 
 function renderPresets(){
@@ -1811,7 +2005,6 @@ function renderPresets(){
         grid.innerHTML += `<div class="preset-btn ${active?'active':''}" onclick="applyPreset('${p.id}')"><div class="swatches"><div style="background:${c.lightSquare}"></div><div style="background:${c.darkSquare}"></div><div style="background:${c.frame}"></div><div style="background:${c.accent}"></div></div><div class="preset-name">${p.name}</div></div>`;
     });
 }
-
 function renderColorPickers(){
     const list = document.getElementById('colorList'); if(!list) return;
     list.innerHTML = '';
@@ -1819,151 +2012,183 @@ function renderColorPickers(){
         list.innerHTML += `<div class="color-row"><span>${COLOR_LABELS[key]}</span><input type="color" id="picker-${key}" value="${currentCustom[key]}" onchange="onColorChange('${key}', this.value)"></div>`;
     });
 }
-
 function renderCameraButtons(){
     const grid = document.getElementById('cameraGrid'); if(!grid) return;
     grid.innerHTML = '';
     Object.keys(CAMERA_PRESETS).forEach(key => {
-        grid.innerHTML += `<button class="cam-btn" onclick="setCamera('${key}')">${CAMERA_PRESETS[key].label}</button>`;
+        const p = CAMERA_PRESETS[key];
+        grid.innerHTML += `<button class="cam-btn" onclick="setCameraPreset('${key}')">${p.label}</button>`;
     });
 }
-
 function renderBackgroundButtons(){
     const grid = document.getElementById('backgroundGrid'); if(!grid) return;
     grid.innerHTML = '';
-    Object.keys(BOARD_BACKGROUNDS).forEach(type => {
-        const cfg = BOARD_BACKGROUNDS[type];
-        const active = currentCustom.boardBg === type;
-        grid.innerHTML += `<button class="bg-btn ${active ? 'active' : ''}" onclick="setBoardBackground('${type}')">${cfg.name}</button>`;
+    Object.keys(BOARD_BACKGROUNDS).forEach(key => {
+        const bg = BOARD_BACKGROUNDS[key];
+        const active = (currentCustom.boardBg === key) ? 'active' : '';
+        grid.innerHTML += `<button class="bg-btn ${active}" onclick="applyBackground('${key}')">${bg.name}</button>`;
     });
 }
 
-window.setBoardBackground = function(type){
-    if(!BOARD_BACKGROUNDS[type]) return;
-    currentCustom.boardBg = type;
-    if (gameInitialized) applyBoardBackground(type);
-    _lastAppliedBg = type;
-    savePlayerData();
-    renderBackgroundButtons();
-    showToast(`🖼️ تم اختيار: ${BOARD_BACKGROUNDS[type].name}`);
+window.applyPreset = function(id){
+    const preset = PRESETS.find(p => p.id === id);
+    if(!preset) return;
+    Object.assign(currentCustom, preset.cfg);
+    applyCustomization(currentCustom);
+    savePlayerData(); renderPresets(); renderColorPickers();
     AudioEngine.sfxClick();
+    showToast('✨ تم تطبيق: ' + preset.name);
 };
-
 window.onColorChange = function(key, value){
     currentCustom[key] = value;
-    applyCustomization(currentCustom);
-    savePlayerData();
-    renderPresets();
+    if(gameInitialized){
+        if(key === 'lightSquare' || key === 'darkSquare'){
+            squares.forEach(s => {
+                if(key === 'lightSquare' && !s.userData.isDark) s.material.color.set(value);
+                if(key === 'darkSquare' && s.userData.isDark) s.material.color.set(value);
+            });
+        } else { applyCustomization(currentCustom); }
+    }
+    savePlayerData(); renderPresets();
 };
-
-window.applyPreset = function(id){
-    const p = PRESETS.find(x => x.id === id); if(!p) return;
-    currentCustom = { ...p.cfg, boardBg: currentCustom.boardBg };
-    applyCustomization(currentCustom);
-    savePlayerData();
-    renderPresets(); renderColorPickers();
-    showToast(`🎨 تم تطبيق: ${p.name}`);
+window.setCameraPreset = function(preset){ setCamera(preset); AudioEngine.sfxClick(); };
+window.applyBackground = function(type){
+    currentCustom.boardBg = type;
+    if(gameInitialized) applyBoardBackground(type);
+    savePlayerData(); renderBackgroundButtons();
+    AudioEngine.sfxClick();
 };
-
 window.resetCustomization = function(){
     currentCustom = { ...DEFAULT_CUSTOM };
     applyCustomization(currentCustom);
     savePlayerData();
-    renderPresets(); renderColorPickers(); renderBackgroundButtons();
-    showToast('↺ تم استعادة الألوان الافتراضية');
-};
-
-window.setCamera = function(preset){
-    if (gameInitialized) setCamera(preset);
-};
-
-window.startPreview = async function(){
+    renderPresets(); renderColorPickers(); renderCameraButtons(); renderBackgroundButtons();
     AudioEngine.sfxClick();
-    document.getElementById('menuScreen').style.display = 'none';
-    document.getElementById('gameScreen').classList.add('active');
-    gameStarted = false;
-    gameOverHandled = true;
-    if(!gameInitialized) {
-        try {
-            await initGame3D();
-        } catch(e) {
-            console.error("Game init error:", e);
-            showToast("❌ حدث خطأ أثناء تحميل الرقعة");
-            return;
+    showToast('↺ تم استعادة الإعدادات');
+};
+
+function attachCanvasEvents(){
+    const canvas = renderer.domElement;
+    canvas.addEventListener('pointerdown', onPointerDown);
+}
+
+function onPointerDown(e){
+    if(!gameInitialized || thinking || pendingPromotion || !gameStarted) return;
+    if(e.button !== 0 && e.pointerType === 'mouse') return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ny = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera({x:nx, y:ny}, camera);
+    let square = null;
+    const pieceHits = raycaster.intersectObjects(pieces.children, true);
+    if(pieceHits.length > 0){
+        let obj = pieceHits[0].object;
+        while(obj && !obj.userData.square) obj = obj.parent;
+        if(obj) square = obj.userData.square;
+    }
+    if(!square){
+        const squareHits = raycaster.intersectObjects(squares, false);
+        if(squareHits.length > 0) square = squareHits[0].object.userData.square;
+    }
+    if(!square) return;
+    handleSquareClick(square);
+}
+
+function handleSquareClick(sq){
+    if(selected){
+        const moves = chess.moves({square: selected, verbose: true});
+        const move = moves.find(m => m.to === sq);
+        if(move){
+            if(move.promotion){
+                pendingPromotion = {from: selected, to: sq};
+                document.getElementById('promotion').style.display = 'block';
+                return;
+            }
+            makeMove(selected, sq, null);
+            selected = null;
+            resetColors();
+        } else {
+            const p = chess.get(sq);
+            if(p && p.color === chess.turn()){
+                selected = sq; showMoves(sq); AudioEngine.sfxSelect();
+            } else { selected = null; resetColors(); }
+        }
+    } else {
+        const p = chess.get(sq);
+        if(p && p.color === chess.turn()){
+            selected = sq; showMoves(sq); AudioEngine.sfxSelect();
         }
     }
+}
+
+function makeMove(from, to, promotion){
+    const beforeFen = chess.fen();
+    const move = chess.move({from, to, promotion: promotion || undefined});
+    if(!move) return false;
+    snapshots.push({fen: beforeFen});
     drawBoard();
-    updateStatus();
-    setTimeout(onResize, 50);
-    setTimeout(onResize, 300);
-    setTimeout(() => openModal('customization'), 150);
-};
-
-// =========================================================
-// منطق اللعبة
-// =========================================================
-function updateStatus(){
-    const status = document.getElementById("status");
-    if(chess.isCheckmate()){ status.textContent = "🏆 كش مات! " + (chess.turn()==='w'?'الأسود':'الأبيض') + " فاز!"; return true; }
-    if(chess.isStalemate()){ status.textContent = "🤝 تعادل بالجمود!"; return true; }
-    if(chess.isDraw()){ status.textContent = "🤝 تعادل"; return true; }
-    if(chess.isCheck()){ status.textContent = "⚠️ كش!"; return false; }
-    status.textContent = chess.turn()==='w' ? "دورك الآن - الأبيض" : "🤖 الكمبيوتر يفكر...";
-    return false;
-}
-
-function saveMove(){ snapshots.push({ fen: chess.fen(), history: [...chess.history()] }); }
-
-function makeMove(from, to, promotion="q"){
-    try{
-        const move = chess.move({ from, to, promotion });
-        if(!move) return false;
-        if(move.captured && chess.turn()==='b'){
-            playerCaptures++;
-            const rs = getRS();
-            if(rs){
-                if (typeof rs.recordCapture === 'function') rs.recordCapture(1);
-                rs.updateMission('capture3', 1);
-                rs.updateAchievement('capture10', 1);
-            }
-        }
-        drawBoard(); resetColors(); selected = null;
-        document.getElementById("moves").textContent = chess.history().join("  ");
-        if(move.captured) AudioEngine.sfxCapture();
-        else AudioEngine.sfxMove();
-        if(chess.isCheck() && !chess.isCheckmate()) AudioEngine.sfxCheck();
+    if(move.captured){ playerCaptures++; AudioEngine.sfxCapture(); }
+    else AudioEngine.sfxMove();
+    addMoveToLog(); updateStatus(); resetColors(); selected = null;
+    if(chess.in_check() && !chess.in_checkmate()) AudioEngine.sfxCheck();
+    if(chess.in_checkmate()){
+        AudioEngine.sfxCheckmate();
+        setTimeout(() => {
+            const playerWon = chess.turn() === 'b';
+            if(playerWon) AudioEngine.sfxWin(); else AudioEngine.sfxLose();
+        }, 500);
+        checkGameOver();
         return true;
-    }catch(e){ return false; }
+    }
+    if(chess.in_stalemate() || chess.in_draw() || chess.in_threefold_repetition()){
+        checkGameOver();
+        return true;
+    }
+    if(chess.turn() === 'b' && gameStarted && !gameOverHandled){
+        thinking = true;
+        const diff = document.getElementById('level')?.value || 'easy';
+        setTimeout(() => {
+            try { aiMove(diff); } catch(e){ console.error(e); }
+            thinking = false;
+        }, 350 + Math.random()*350);
+    }
+    return true;
 }
 
-function evaluate(){
-    if(chess.isCheckmate()) return chess.turn()==='w' ? -100000 : 100000;
-    if(chess.isDraw()) return 0;
-    const values = { p:100, n:320, b:330, r:500, q:900, k:20000 };
+const PIECE_VALUES = {p:100, n:320, b:330, r:500, q:900, k:20000};
+function evaluateBoard(){
     let score = 0;
-    chess.board().forEach((row, r) => {
-        row.forEach((p, f) => {
-            if(!p) return;
-            let v = values[p.type];
-            if(p.type==='p') v += (p.color==='b' ? r : 7-r) * 4;
-            const center = 7 - (Math.abs(3.5-f) + Math.abs(3.5-r));
-            v += center * 2;
-            score += p.color==='w' ? v : -v;
-        });
-    });
+    const b = chess.board();
+    for(let r=0;r<8;r++){
+        for(let f=0;f<8;f++){
+            const p = b[r][f]; if(!p) continue;
+            let val = PIECE_VALUES[p.type] || 0;
+            const centerDist = Math.abs(f - 3.5) + Math.abs(r - 3.5);
+            val += Math.max(0, 7 - centerDist) * 3;
+            if(p.type === 'p'){
+                if(p.color === 'w') val += (6 - r) * 10; else val += (r - 1) * 10;
+            }
+            if(p.type === 'k' && r > 0 && r < 7 && f > 0 && f < 7) val += 20;
+            score += p.color === 'w' ? val : -val;
+        }
+    }
     return score;
 }
 
 function minimax(depth, alpha, beta, maximizing){
-    if(depth===0 || chess.isGameOver()) return evaluate();
-    const moves = chess.moves();
+    if(depth === 0 || chess.game_over()){
+        if(chess.in_checkmate()) return maximizing ? -99999 : 99999;
+        return evaluateBoard();
+    }
+    const moves = chess.moves({verbose:true});
     if(maximizing){
         let best = -Infinity;
         for(const m of moves){
             chess.move(m);
-            best = Math.max(best, minimax(depth-1, alpha, beta, false));
+            const s = minimax(depth-1, alpha, beta, false);
             chess.undo();
-            alpha = Math.max(alpha, best);
+            if(s > best) best = s;
+            if(best > alpha) alpha = best;
             if(beta <= alpha) break;
         }
         return best;
@@ -1971,415 +2196,195 @@ function minimax(depth, alpha, beta, maximizing){
         let best = Infinity;
         for(const m of moves){
             chess.move(m);
-            best = Math.min(best, minimax(depth-1, alpha, beta, true));
+            const s = minimax(depth-1, alpha, beta, true);
             chess.undo();
-            beta = Math.min(beta, best);
+            if(s < best) best = s;
+            if(best < beta) beta = best;
             if(beta <= alpha) break;
         }
         return best;
     }
 }
 
-function computer(){
-    if(chess.isGameOver()) return;
-    const moves = chess.moves(); if(!moves.length) return;
-    const level = document.getElementById("level").value;
-    let chosen;
-    if(level==='easy'){
-        const caps = moves.filter(m => m.includes('x'));
-        const pool = Math.random()<.5 && caps.length ? caps : moves;
-        chosen = pool[Math.floor(Math.random()*pool.length)];
-    } else {
-        const isLowEnd = (navigator.hardwareConcurrency || 4) <= 4;
-        const depth = level==='medium' ? 1 : (isLowEnd ? 1 : 2);
-        let best = Infinity;
-        for(const m of moves){
-            chess.move(m);
-            const s = minimax(depth, -Infinity, Infinity, true);
-            chess.undo();
-            if(s < best){ best = s; chosen = m; }
-        }
-    }
-    if(chosen){
-        const result = chess.move(chosen);
-        drawBoard();
-        document.getElementById("moves").textContent = chess.history().join("  ");
-        if(result && result.captured) AudioEngine.sfxCapture();
-        else AudioEngine.sfxMove();
-        if(chess.isCheck() && !chess.isCheckmate()) AudioEngine.sfxCheck();
-        updateStatus();
-    }
-}
-
-function executePlayerMove(from, to, promotion){
-    if(!makeMove(from, to, promotion)) return;
-    document.getElementById("promotion").style.display = "none";
-    if(updateStatus()) return;
-    thinking = true;
-    setTimeout(() => {
-        if(gameStarted && !chess.isGameOver()){ computer(); updateStatus(); }
-        thinking = false;
-    }, 350);
-}
-
-function attachCanvasEvents(){
-    const canvas = renderer.domElement;
-    let dx = 0, dy = 0;
-    canvas.addEventListener("pointerdown", e => { dx = e.clientX; dy = e.clientY; });
-    canvas.addEventListener("pointerup", e => {
-        if(Math.hypot(e.clientX - dx, e.clientY - dy) < 10) onClick(e);
-    });
-}
-
-function onClick(event){
-    if(!gameStarted || thinking || chess.isGameOver() || pendingPromotion) return;
-    if(chess.turn() !== "w") return;
-
-    const rect = renderer.domElement.getBoundingClientRect();
-    const pointer = new THREE.Vector2(
-        ((event.clientX - rect.left) / rect.width) * 2 - 1,
-        -((event.clientY - rect.top) / rect.height) * 2 + 1
-    );
-    const ray = new THREE.Raycaster();
-    ray.setFromCamera(pointer, camera);
-
-    const pieceHits = ray.intersectObjects(pieces.children, true);
-    let clickedSquare = null;
-    if(pieceHits.length > 0){
-        let obj = pieceHits[0].object;
-        while(obj && !obj.userData.square) obj = obj.parent;
-        if(obj) clickedSquare = obj.userData.square;
-    }
-    if(!clickedSquare){
-        const sqHits = ray.intersectObjects(squares, false);
-        if(sqHits.length > 0) clickedSquare = sqHits[0].object.userData.square;
-    }
-    if(!clickedSquare) return;
-
-    if(selected){
-        const moves = chess.moves({ square: selected, verbose: true });
-        const mv = moves.find(m => m.to === clickedSquare);
-        if(mv){
-            if(mv.promotion){
-                pendingPromotion = { from: selected, to: clickedSquare };
-                document.getElementById("promotion").style.display = "block";
-                AudioEngine.sfxClick();
-                return;
-            }
-            saveMove();
-            executePlayerMove(selected, clickedSquare);
-            return;
-        }
-        const target = chess.get(clickedSquare);
-        if(target && target.color === "w"){
-            selected = clickedSquare;
-            showMoves(selected);
-            AudioEngine.sfxSelect();
-            return;
-        }
-        selected = null;
-        resetColors();
+function aiMove(difficulty){
+    if(!gameStarted || gameOverHandled) return;
+    const moves = chess.moves({verbose:true});
+    if(moves.length === 0) return;
+    if(difficulty === 'easy' && Math.random() < 0.35){
+        const m = moves[Math.floor(Math.random()*moves.length)];
+        makeMove(m.from, m.to, m.promotion);
         return;
     }
+    const depthMap = {easy:1, medium:2, hard:3};
+    const depth = depthMap[difficulty] || 1;
+    let bestMove = null, bestScore = Infinity;
+    const shuffled = moves.slice().sort(() => Math.random() - 0.5);
+    for(const m of shuffled){
+        chess.move(m);
+        const score = minimax(depth - 1, -Infinity, Infinity, true);
+        chess.undo();
+        if(score < bestScore){ bestScore = score; bestMove = m; }
+    }
+    if(bestMove) makeMove(bestMove.from, bestMove.to, bestMove.promotion);
+}
 
-    const piece = chess.get(clickedSquare);
-    if(piece && piece.color === "w"){
-        selected = clickedSquare;
-        showMoves(selected);
-        AudioEngine.sfxSelect();
+function addMoveToLog(){
+    const log = document.getElementById('moves'); if(!log) return;
+    const history = chess.history({verbose:true});
+    let text = '';
+    for(let i=0;i<history.length;i+=2){
+        const num = Math.floor(i/2)+1;
+        text += `${num}. ${history[i].san}`;
+        if(history[i+1]) text += ` ${history[i+1].san}`;
+        text += ' ';
+    }
+    log.textContent = text.trim() || 'سجل الحركات سيظهر هنا';
+    log.scrollTop = log.scrollHeight;
+}
+
+function updateStatus(){
+    const statusEl = document.getElementById('status'); if(!statusEl) return;
+    if(gameOverHandled) return;
+    if(chess.in_checkmate()){
+        statusEl.textContent = chess.turn() === 'w' ? '💀 كش مات! خسرت' : '🏆 كش مات! فزت!';
+    } else if(chess.in_stalemate()){
+        statusEl.textContent = '🤝 تعادل - طريق مسدود';
+    } else if(chess.in_draw()){
+        statusEl.textContent = '🤝 تعادل';
+    } else if(chess.in_check()){
+        statusEl.textContent = chess.turn() === 'w' ? '⚠️ أنت في كش!' : '⚔️ الخصم في كش!';
+    } else {
+        statusEl.textContent = chess.turn() === 'w' ? 'دورك الآن - الأبيض' : '🤖 دور الكمبيوتر...';
     }
 }
 
-// =========================================================
-// أزرار اللعبة
-// =========================================================
-window.startGame = async function(level){
-    AudioEngine.sfxClick();
+function checkGameOver(){
+    if(gameOverHandled) return;
+    if(chess.in_checkmate()){
+        gameOverHandled = true;
+        const playerWon = chess.turn() === 'b';
+        const statusEl = document.getElementById('status');
+        if(statusEl) statusEl.textContent = playerWon ? '🏆 فزت! كش مات' : '💀 خسرت! كش مات';
+        try {
+            const rs = getRS();
+            if(rs){
+                if(typeof rs.onGameFinished === 'function') rs.onGameFinished({won:playerWon, difficulty:document.getElementById('level')?.value});
+                else if(typeof rs.recordGameResult === 'function') rs.recordGameResult(playerWon);
+            }
+        } catch(e){}
+        if(playerWon) showToast('🏆 مبروك! فزت باللعبة');
+        else showToast('💀 خسرت! حاول مجدداً');
+    } else if(chess.in_stalemate() || chess.in_draw() || chess.in_threefold_repetition()){
+        gameOverHandled = true;
+        const statusEl = document.getElementById('status');
+        if(statusEl) statusEl.textContent = '🤝 تعادل';
+        showToast('🤝 انتهت اللعبة بالتعادل');
+    }
+}
+
+function resetBoardState(){
+    chess.reset();
+    snapshots = []; selected = null; thinking = false; pendingPromotion = null;
+    gameOverHandled = false; playerCaptures = 0;
+    drawBoard();
+    const movesEl = document.getElementById('moves');
+    if(movesEl) movesEl.textContent = 'سجل الحركات سيظهر هنا';
+    const promEl = document.getElementById('promotion');
+    if(promEl) promEl.style.display = 'none';
+    resetColors(); updateStatus(); addMoveToLog();
+}
+
+async function startGame(difficulty){
     closeModal('difficulty');
-    const names = { easy:'سهل', medium:'متوسط', hard:'صعب' };
-    showToast('♟️ بدء المباراة — ' + names[level]);
+    const levelSel = document.getElementById('level');
+    if(levelSel) levelSel.value = difficulty;
     document.getElementById('menuScreen').style.display = 'none';
     document.getElementById('gameScreen').classList.add('active');
-    gameStarted = true;
-    gameOverHandled = false;
-    if(level) document.getElementById('level').value = level;
-    
-    if(!gameInitialized) {
-        try {
-            await initGame3D();
-        } catch(e) {
-            console.error("Game init error:", e);
-            showToast("❌ حدث خطأ أثناء تحميل الرقعة");
-            return;
-        }
-    }
-    
-    window.newGame();
-    const rs = getRS();
-    if(rs) rs.updateMission('play1', 1);
-    setTimeout(onResize, 50);
-    setTimeout(onResize, 300);
-};
-
-window.backMenu = function(){
+    if(!gameInitialized){ await initGame3D(); }
+    await new Promise(r => setTimeout(r, 100));
+    onResize();
+    if(currentCustom.boardBg) applyBoardBackground(currentCustom.boardBg);
+    resetBoardState();
+    gameStarted = true; gameOverHandled = false;
+    updateStatus(); addMoveToLog();
+    if(playerData.settings.music) AudioEngine.startMusic();
     AudioEngine.sfxClick();
-    gameStarted = false; thinking = false; pendingPromotion = null; selected = null;
-    const promo = document.getElementById("promotion");
-    if(promo) promo.style.display = "none";
-    document.getElementById("gameScreen").classList.remove("active");
-    document.getElementById("menuScreen").style.display = "flex";
-};
+}
+
+async function startPreview(){
+    document.getElementById('menuScreen').style.display = 'none';
+    document.getElementById('gameScreen').classList.add('active');
+    if(!gameInitialized){ await initGame3D(); }
+    await new Promise(r => setTimeout(r, 100));
+    onResize();
+    if(currentCustom.boardBg) applyBoardBackground(currentCustom.boardBg);
+    chess.reset(); drawBoard(); updateStatus();
+    gameStarted = false; gameOverHandled = false;
+    setTimeout(() => openModal('customization'), 250);
+}
+
+window.startGame = startGame;
+window.startPreview = startPreview;
 
 window.newGame = function(){
-    AudioEngine.sfxClick();
+    if(!gameStarted) return;
+    resetBoardState();
     gameStarted = true; gameOverHandled = false;
-    chess.reset(); snapshots = []; selected = null; pendingPromotion = null;
-    thinking = false; playerCaptures = 0;
-    const promo = document.getElementById("promotion");
-    if(promo) promo.style.display = "none";
-    document.getElementById("moves").textContent = "سجل الحركات سيظهر هنا";
-    if(gameInitialized){ drawBoard(); resetColors(); }
-    updateStatus();
+    AudioEngine.sfxClick();
+    showToast('🔄 لعبة جديدة');
 };
-
 window.undoMove = function(){
-    if(!gameStarted || thinking || pendingPromotion) return;
-    if(snapshots.length === 0){ showToast("لا توجد حركات للتراجع عنها"); return; }
-    const snap = snapshots.pop();
-    try{ chess.load(snap.fen); }catch(e){ return; }
-    selected = null; pendingPromotion = null;
-    document.getElementById("promotion").style.display = "none";
-    if(gameInitialized){ drawBoard(); resetColors(); }
-    document.getElementById("moves").textContent = snap.history.length ? snap.history.join("  ") : "سجل الحركات سيظهر هنا";
-    updateStatus();
+    if(!gameStarted || thinking) return;
+    if(chess.history().length === 0) return;
+    const count = (chess.turn() === 'w' && chess.history().length >= 2) ? 2 : 1;
+    for(let i=0;i<count;i++) chess.undo();
+    snapshots.pop();
+    drawBoard(); updateStatus();
+    selected = null; gameOverHandled = false;
+    resetColors(); addMoveToLog();
     AudioEngine.sfxClick();
 };
-
+window.backMenu = function(){
+    document.getElementById('gameScreen').classList.remove('active');
+    document.getElementById('menuScreen').style.display = 'flex';
+    gameStarted = false; thinking = false; pendingPromotion = null;
+    selected = null; gameOverHandled = false;
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+    const promEl = document.getElementById('promotion');
+    if(promEl) promEl.style.display = 'none';
+    AudioEngine.sfxClick();
+};
 window.promote = function(piece){
     if(!pendingPromotion) return;
-    const { from, to } = pendingPromotion;
+    const {from, to} = pendingPromotion;
     pendingPromotion = null;
-    document.getElementById("promotion").style.display = "none";
-    saveMove();
-    executePlayerMove(from, to, piece);
+    document.getElementById('promotion').style.display = 'none';
+    makeMove(from, to, piece);
 };
-
 window.cancelPromotion = function(){
     pendingPromotion = null;
-    document.getElementById("promotion").style.display = "none";
-    selected = null;
-    if(gameInitialized) resetColors();
-    AudioEngine.sfxClick();
+    document.getElementById('promotion').style.display = 'none';
+    selected = null; resetColors();
 };
 
-window.addEventListener("resize", onResize);
-window.addEventListener("orientationchange", () => setTimeout(onResize, 180));
-
-const _origUpdateStatus = updateStatus;
-updateStatus = function(){
-    const isOver = _origUpdateStatus();
-    if(isOver && gameStarted && !gameOverHandled){
-        gameOverHandled = true;
-        if(chess.isCheckmate()){
-            AudioEngine.sfxCheckmate();
-            const expectedFen = chess.fen();
-            setTimeout(() => {
-                if(!gameStarted) return;
-                if(chess.fen() !== expectedFen) return;
-                const rs = getRS();
-                if(chess.turn() === 'b'){
-                    AudioEngine.sfxWin();
-                    if(rs){
-                        if (typeof rs.recordGame === 'function') rs.recordGame('win');
-                        rs.updateMission('win1', 1);
-                        rs.updateAchievement('win1', 1);
-                        rs.updateAchievement('win5', 1);
-                        rs.updateAchievement('win20', 1);
-                        rs.addCoins(500, 'مكافأة الفوز');
-                        rs.addTrophies(30, 'نقاط ترتيب');
-                    }
-                } else {
-                    AudioEngine.sfxLose();
-                    if(rs && typeof rs.recordGame === 'function') rs.recordGame('loss');
-                }
-            }, 900);
-        } else if (chess.isStalemate() || chess.isDraw()) {
-            const rs = getRS();
-            if(rs && typeof rs.recordGame === 'function') rs.recordGame('draw');
-        }
-    }
-    return isOver;
-};
-
-attachSettingsListeners();
+// التهيئة
 loadPlayerData();
-
-function initRewardsUI() {
-    try {
-        renderDailyRewardsUI();
-        renderAchievementsUI();
-        renderMissionsUI();
-        renderChestUI();
-        setInterval(renderChestUI, 1000);
-    } catch (e) {
-        console.warn('[Rewards UI] فشل التهيئة، إعادة المحاولة...', e);
-        setTimeout(initRewardsUI, 500);
-    }
-}
-initRewardsUI();
+attachSettingsListeners();
+renderPresets(); renderColorPickers(); renderCameraButtons(); renderBackgroundButtons();
 
 setTimeout(() => {
-    const rs = getRS();
-    if (rs) {
-        try {
-            const bal = rs.getBalance();
-            const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = (v || 0).toLocaleString(); };
-            setText('ui-coins', bal.coins); setText('ui-gems', bal.gems); setText('ui-trophies', bal.trophies); setText('ui-level', bal.level);
-        } catch (e) {}
+    const splash = document.getElementById('splash');
+    if(splash){
+        splash.classList.add('hide');
+        setTimeout(() => { if(splash.parentNode) splash.parentNode.removeChild(splash); }, 1100);
     }
-}, 300);
+}, 2600);
 
-setTimeout(() => {
-    const s = document.getElementById("splash");
-    if(s){ s.classList.add("hide"); setTimeout(() => s.remove(), 1000); }
-}, 3600);
+setInterval(() => { try { if(typeof window.renderChestUI === 'function') window.renderChestUI(); } catch(e){} }, 5000);
+window.addEventListener('resize', () => { if(gameInitialized) onResize(); });
+window.addEventListener('orientationchange', () => setTimeout(() => { if(gameInitialized) onResize(); }, 200));
 
-// =========================================================
-// الخلفية 3D للقائمة
-// =========================================================
-const CFG = { camPos: new THREE.Vector3(0, 5.0, 18), camLook: new THREE.Vector3(0, 6.0, -10), fov: 58, fogColor: 0x08141f, fogDensity: 0.0095 };
-const COL = { gold: 0xc9a96a, stone: 0x0d1520, stoneDark: 0x060a11 };
-
-const bgContainer = document.getElementById('bg3d');
-let bgRenderer = null;
-try {
-    bgRenderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', alpha: false });
-    bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-    bgRenderer.setSize(window.innerWidth, window.innerHeight);
-    bgRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-    bgRenderer.toneMappingExposure = 1.18;
-    bgRenderer.outputColorSpace = THREE.SRGBColorSpace;
-    bgRenderer.setClearColor(CFG.fogColor, 1);
-    bgContainer.appendChild(bgRenderer.domElement);
-} catch(e){ bgContainer.style.background = 'linear-gradient(180deg,#08141f,#02040a)'; }
-
-const bgScene = new THREE.Scene();
-bgScene.fog = new THREE.FogExp2(CFG.fogColor, CFG.fogDensity);
-const bgCamera = new THREE.PerspectiveCamera(CFG.fov, window.innerWidth / window.innerHeight, 0.1, 900);
-bgCamera.position.copy(CFG.camPos);
-bgCamera.lookAt(CFG.camLook);
-
-let composer = null;
-let bloomPass = null;
-const isLowEnd = /Android|webview/i.test(navigator.userAgent) || (navigator.hardwareConcurrency || 4) <= 4;
-
-if (bgRenderer && EffectComposer && RenderPass && OutputPass) {
-    try {
-        composer = new EffectComposer(bgRenderer);
-        composer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-        composer.setSize(window.innerWidth, window.innerHeight);
-        composer.addPass(new RenderPass(bgScene, bgCamera));
-        if (UnrealBloomPass && !isLowEnd) {
-            bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.62, 0.78, 0.60);
-            composer.addPass(bloomPass);
-        }
-        composer.addPass(new OutputPass());
-    } catch(e) { composer = null; }
-}
-
-function makeGlowTexture(size = 256, inner = 'rgba(255,240,205,1)', outer = 'rgba(255,200,120,0)'){
-    const c = document.createElement('canvas');
-    c.width = c.height = size;
-    const ctx = c.getContext('2d');
-    const g = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
-    g.addColorStop(0, inner); g.addColorStop(0.45, inner.replace(/[\d.]+\)$/, '0.35)')); g.addColorStop(1, outer);
-    ctx.fillStyle = g; ctx.fillRect(0, 0, size, size);
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
-}
-
-const skyUniforms = { uTime: { value: 0 } };
-const skyMat = new THREE.ShaderMaterial({
-  uniforms: skyUniforms, side: THREE.BackSide, depthWrite: false, fog: false,
-  vertexShader: `varying vec3 vWorldPos; void main(){ vec4 wp = modelMatrix * vec4(position, 1.0); vWorldPos = wp.xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-  fragmentShader: `uniform float uTime; varying vec3 vWorldPos;
-    void main(){
-        vec3 dir = normalize(vWorldPos); float h = clamp(dir.y * 1.15 + 0.07, 0.0, 1.0);
-        vec3 cH = vec3(0.030, 0.078, 0.104); vec3 cM = vec3(0.010, 0.028, 0.062); vec3 cZ = vec3(0.0028, 0.0070, 0.0200);
-        vec3 col = mix(cH, cM, smoothstep(0.00, 0.34, h)); col = mix(col, cZ, smoothstep(0.34, 1.00, h));
-        float ux = atan(dir.z, dir.x) / 3.14159265; float band = sin(ux * 4.0 + uTime * 0.055 * 2.0 + 1.9) * 0.078;
-        band = clamp(band * 1.2, 0.0, 1.0); col += vec3(0.09, 0.66, 0.52) * band * 0.6; gl_FragColor = vec4(col, 1.0);
-    }`
-});
-bgScene.add(new THREE.Mesh(new THREE.SphereGeometry(420, 48, 32), skyMat));
-
-bgScene.add(new THREE.HemisphereLight(0x244a6e, 0x04060b, 0.85));
-const backLight = new THREE.DirectionalLight(0xffcf94, 2.2); backLight.position.set(-14, 42, -95); bgScene.add(backLight);
-const coolLight = new THREE.DirectionalLight(0x5f9cc4, 1.25); coolLight.position.set(28, 22, 16); bgScene.add(coolLight);
-
-(function castle(){
-    const g = new THREE.Group(); g.position.set(0, 0, -68);
-    const stone = new THREE.MeshStandardMaterial({ color: COL.stone, roughness: 0.96 });
-    const stoneD = new THREE.MeshStandardMaterial({ color: COL.stoneDark, roughness: 1.0 });
-    const gold = new THREE.MeshStandardMaterial({ color: COL.gold, roughness: 0.28, metalness: 1.0, emissive: COL.gold, emissiveIntensity: 0.65 });
-    const main = new THREE.Mesh(new THREE.BoxGeometry(15, 30, 11), stone); main.position.set(0, 15, 0); g.add(main);
-    const top1 = new THREE.Mesh(new THREE.BoxGeometry(15.6, 1, 11.6), gold); top1.position.set(0, 30.2, 0); g.add(top1);
-    [-20, 20].forEach(tx => {
-        const t = new THREE.Mesh(new THREE.CylinderGeometry(4.2, 5, 38, 12), stone); t.position.set(tx, 19, 1); g.add(t);
-        const th = new THREE.Mesh(new THREE.ConeGeometry(5.2, 10, 12), stoneD); th.position.set(tx, 43.6, 1); g.add(th);
-    });
-    bgScene.add(g);
-})();
-
-const P_COUNT = isLowEnd ? 300 : 500;
-const pGeo = new THREE.BufferGeometry();
-const pPos = new Float32Array(P_COUNT * 3);
-const pVel = new Float32Array(P_COUNT * 3);
-for (let i = 0; i < P_COUNT; i++){
-    pPos[i*3] = (Math.random() - 0.5) * 78; pPos[i*3+1] = Math.random() * 42 - 2; pPos[i*3+2] = -70 + Math.random() * 90;
-    pVel[i*3] = (Math.random() - 0.5) * 0.02; pVel[i*3+1] = 0.01 + Math.random() * 0.028; pVel[i*3+2] = (Math.random() - 0.5) * 0.018;
-}
-pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-const pMat = new THREE.PointsMaterial({ size: 0.6, map: makeGlowTexture(64, 'rgba(255,236,190,1)', 'rgba(255,200,120,0)'), color: 0xffdca8, transparent: true, opacity: 0.92, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true });
-bgScene.add(new THREE.Points(pGeo, pMat));
-
-const clockBG = new THREE.Clock();
-let elapsedBG = 0;
-function animateBG(){
-    requestAnimationFrame(animateBG);
-    const dt = Math.min(clockBG.getDelta(), 0.05);
-    const gs = document.getElementById('gameScreen');
-    if (gs && gs.classList.contains('active')) return;
-    elapsedBG += dt; skyUniforms.uTime.value = elapsedBG;
-    bgCamera.position.x = CFG.camPos.x + Math.sin(elapsedBG * 0.16) * 0.55;
-    bgCamera.position.y = CFG.camPos.y + Math.sin(elapsedBG * 0.11 + 1.3) * 0.22;
-    bgCamera.lookAt(CFG.camLook);
-    const pos = pGeo.attributes.position.array;
-    for (let i = 0; i < P_COUNT; i++){
-        const i3 = i*3;
-        pos[i3] += pVel[i3] * dt * 60; pos[i3+1] += pVel[i3+1] * dt * 60; pos[i3+2] += pVel[i3+2] * dt * 60;
-        if (pos[i3+1] > 42){ pos[i3+1] = -2; pos[i3] = (Math.random()-0.5)*78; pos[i3+2] = -70 + Math.random()*90; }
-    }
-    pGeo.attributes.position.needsUpdate = true;
-    if (composer) composer.render(); else if (bgRenderer) bgRenderer.render(bgScene, bgCamera);
-}
-
-function onResizeBG(){
-    if (!bgRenderer) return;
-    const w = window.innerWidth, h = window.innerHeight; const aspect = w / h;
-    let fov = CFG.fov;
-    if (aspect < 1) fov = CFG.fov + (1 / Math.max(aspect, 0.42) - 1) * 21;
-    else fov = CFG.fov - Math.min((aspect - 1) * 5, 9);
-    fov = Math.min(Math.max(fov, 46), 92);
-    bgCamera.fov = fov; bgCamera.aspect = aspect; bgCamera.updateProjectionMatrix();
-    bgRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-    bgRenderer.setSize(w, h);
-    if (composer) { composer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5)); composer.setSize(w, h); if (bloomPass) bloomPass.setSize(w, h); }
-}
-
-window.addEventListener("resize", onResizeBG, { passive: true });
-window.addEventListener("orientationchange", () => setTimeout(onResizeBG, 180), { passive: true });
-onResizeBG();
-animateBG();
+console.log('👑 Monster Chess 3D — Royal Edition جاهز');
 </script>
 </body>
 </html>
